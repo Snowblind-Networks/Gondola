@@ -1,0 +1,4 @@
+name: Gondola
+main: au.net.snowblind.Gondola.Gondola
+version: 0.0.1-SNAPSHOT
+depend: [Vault]
