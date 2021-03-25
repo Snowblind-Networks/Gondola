@@ -1,36 +1,45 @@
-package au.net.snowblind.Gondola;
+package au.net.snowblind.gondola;
 
 import java.util.HashMap;
 import java.util.Random;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import au.net.snowblind.gondola.commands.MessageCommand;
+import au.net.snowblind.gondola.commands.TeleportCommand;
+import au.net.snowblind.gondola.handlers.ChatHandler;
+
 public class Gondola extends JavaPlugin implements Listener {
 	public static Gondola plugin;
 	public static HashMap<Player, PlayerData> players = new HashMap<Player, PlayerData>();
-	
+	public static VaultProviders vault;
 	
 	@Override
 	public void onEnable() {
 		Gondola.plugin = this;
+		vault = new VaultProviders();
 		saveDefaultConfig();
 		Icons.loadIcons();
 		getServer().getPluginManager().registerEvents(this, this);
-		// TODO Insert code here
+		registerCommands();
 	}
 	
 	@Override
 	public void onDisable() {
 		players.clear();
-		// TODO Insert code here
+	}
+	
+	private void registerCommands() {
+		getCommand("tp").setExecutor(new TeleportCommand());
+		getCommand("msg").setExecutor(new MessageCommand());
 	}
 	
 	@EventHandler
@@ -54,5 +63,10 @@ public class Gondola extends JavaPlugin implements Listener {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent e) {
+		e.setFormat(ChatHandler.getFormat(e.getPlayer()));
 	}
 }

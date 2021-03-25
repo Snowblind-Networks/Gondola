@@ -1,4 +1,4 @@
-package au.net.snowblind.Gondola;
+package au.net.snowblind.gondola;
 
 import java.io.File;
 import java.util.ArrayList;

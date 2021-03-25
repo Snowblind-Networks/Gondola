@@ -1,4 +1,4 @@
-package au.net.snowblind.Gondola;
+package au.net.snowblind.gondola;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +22,6 @@ public class PlayerData {
 		if (!f.exists())
 			createPlayerData(p);
 		loadPlayerData(p);
-
-		Gondola.plugin.getLogger().info(defaultPlayerData.toString());
-		Gondola.plugin.getLogger().info(playerData.toString());
 	}
 	
 	private void loadDefaults() {

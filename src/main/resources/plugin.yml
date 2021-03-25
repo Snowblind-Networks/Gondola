@@ -1,4 +1,12 @@
 name: Gondola
-main: au.net.snowblind.Gondola.Gondola
-version: 0.0.1-SNAPSHOT
+main: au.net.snowblind.gondola.Gondola
+version: 0.1
+author: insyder1201
 depend: [Vault]
+commands:
+  tp:
+    description: Request to teleport to player
+    usage: /tp <player>
+  msg:
+    description: Privately message a player
+    usage: /msg <player> <message>
