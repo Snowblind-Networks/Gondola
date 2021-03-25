@@ -9,12 +9,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Gondola extends JavaPlugin implements Listener {
 	public static Gondola plugin;
-	public static HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
+	public static HashMap<Player, PlayerData> players = new HashMap<Player, PlayerData>();
 	
 	
 	@Override
@@ -36,8 +37,12 @@ public class Gondola extends JavaPlugin implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		PlayerData data = new PlayerData(p);
-		players.put(p.getUniqueId(), data);
-		
+		players.put(p, data);
+	}
+	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		players.get(e.getPlayer()).savePlayerData();
 	}
 	
 	@EventHandler
