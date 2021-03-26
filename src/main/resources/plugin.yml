@@ -13,3 +13,16 @@ commands:
   r:
     description: Privately reply to a player
     usage: /r <message>
+  home:
+    description: Teleport to one of your homes
+    usage: /home [home]
+  sethome:
+    description: Set one of your homes
+    usage: /sethome [home]
+  listhomes:
+    description: List your homes
+    usage: /listhomes
+    aliases: [homes]
+  delhome:
+    description: Delete a home
+    usage: /delhome <home>

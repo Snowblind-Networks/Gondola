@@ -13,7 +13,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import au.net.snowblind.gondola.commands.DelhomeCommand;
+import au.net.snowblind.gondola.commands.HomeCommand;
+import au.net.snowblind.gondola.commands.ListhomesCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
+import au.net.snowblind.gondola.commands.SethomeCommand;
 import au.net.snowblind.gondola.commands.TeleportCommand;
 import au.net.snowblind.gondola.handlers.ChatHandler;
 
@@ -42,6 +46,10 @@ public class Gondola extends JavaPlugin implements Listener {
 		getCommand("tp").setExecutor(new TeleportCommand());
 		getCommand("msg").setExecutor(new MessageCommand());
 		getCommand("r").setExecutor(new MessageCommand());
+		getCommand("home").setExecutor(new HomeCommand());
+		getCommand("sethome").setExecutor(new SethomeCommand());
+		getCommand("listhomes").setExecutor(new ListhomesCommand());
+		getCommand("delhome").setExecutor(new DelhomeCommand());
 	}
 	
 	@EventHandler

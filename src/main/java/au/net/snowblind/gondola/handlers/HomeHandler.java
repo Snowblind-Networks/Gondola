@@ -22,7 +22,7 @@ public class HomeHandler {
 		ConfigurationSection cs;
 		
 		if ((cs = pd.playerData.getConfigurationSection("home." + home)) != null) {
-			return new Location(Gondola.plugin.getServer().getWorld(cs.getString("world")), cs.getDouble("x"), cs.getDouble("y"), cs.getDouble("z"));
+			return ConfigHandler.getLocation(cs);
 		} else {
 			return null;
 		}
@@ -33,9 +33,14 @@ public class HomeHandler {
 		PlayerData pd = new PlayerData(p);
 		ConfigurationSection cs = pd.playerData.createSection("home." + home);
 		
-		cs.set("world", p.getWorld().getName());
-		cs.set("x", p.getLocation().getX());
-		cs.set("y", p.getLocation().getY());
-		cs.set("z", p.getLocation().getZ());
+		ConfigHandler.setLocation(cs, p.getLocation());
+		pd.savePlayerData();
+	}
+	
+	// Deletes home
+	public static void delHome(Player p, String home) {
+		PlayerData pd = new PlayerData(p);
+		pd.playerData.set("home." + home, null);;
+		pd.savePlayerData();
 	}
 }
