@@ -28,6 +28,7 @@ public class Gondola extends JavaPlugin implements Listener {
 		vault = new VaultProviders();
 		saveDefaultConfig();
 		Icons.loadIcons();
+		MessageCommand.prevMessager = new HashMap<Player, Player>();
 		getServer().getPluginManager().registerEvents(this, this);
 		registerCommands();
 	}
@@ -40,6 +41,7 @@ public class Gondola extends JavaPlugin implements Listener {
 	private void registerCommands() {
 		getCommand("tp").setExecutor(new TeleportCommand());
 		getCommand("msg").setExecutor(new MessageCommand());
+		getCommand("r").setExecutor(new MessageCommand());
 	}
 	
 	@EventHandler
@@ -68,5 +70,6 @@ public class Gondola extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
 		e.setFormat(ChatHandler.getFormat(e.getPlayer()));
+		e.setMessage(ChatHandler.processMessage(e.getMessage()));
 	}
 }

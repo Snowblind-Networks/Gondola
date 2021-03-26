@@ -10,3 +10,6 @@ commands:
   msg:
     description: Privately message a player
     usage: /msg <player> <message>
+  r:
+    description: Privately reply to a player
+    usage: /r <message>
