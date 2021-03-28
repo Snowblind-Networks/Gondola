@@ -6,23 +6,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.handlers.HomeHandler;
+import au.net.snowblind.gondola.handlers.WarpHandler;
 
 
-public class DelhomeCommand implements CommandExecutor {
+public class DelwarpCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
 			if (args.length != 1) {
 				return false;
+			} else if (WarpHandler.getWarp(args[0]) != null) {
+				WarpHandler.delWarp(args[0]);
+				sender.sendMessage("Deleted warp " + args[0]);
 			} else {
-				if (args[0].equals("default")) {
-					sender.sendMessage("You cannot delete your default home!");
-				} else {
-					HomeHandler.delHome((Player) sender, args[0]);
-					sender.sendMessage("Deleted home " + args[0]);
-				}
+				sender.sendMessage("Warp not found: " + args[0]);
 			}
-			
 		} else {
 			sender.sendMessage("Only players can run this command.");
 		}

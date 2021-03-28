@@ -1,6 +1,7 @@
 name: Gondola
 main: au.net.snowblind.gondola.Gondola
 version: 0.1
+api-version: 1.16
 author: insyder1201
 depend: [Vault]
 commands:
@@ -26,3 +27,12 @@ commands:
   delhome:
     description: Delete a home
     usage: /delhome <home>
+  warp:
+    description: Teleport to a warp or list warps
+    usage: /warp [warp]
+  setwarp:
+    description: Set a warp
+    usage: /setwarp [warp]
+  delwarp:
+    description: Delete a warp
+    usage: /delwarp <warp>
