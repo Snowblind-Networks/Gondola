@@ -2,10 +2,8 @@ package au.net.snowblind.gondola.handlers;
 
 import java.util.HashMap;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;

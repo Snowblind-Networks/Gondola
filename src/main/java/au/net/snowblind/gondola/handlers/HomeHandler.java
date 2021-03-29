@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import au.net.snowblind.gondola.Gondola;
 import au.net.snowblind.gondola.PlayerData;
 
 public class HomeHandler {

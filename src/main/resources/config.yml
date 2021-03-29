@@ -1,1 +1,16 @@
 warps: []
+spawn:
+  min:
+    world: world
+    x: -175
+    y: 0
+    z: -175
+    yaw: 0
+    pitch: 0
+  max:
+    world: world
+    x: 175
+    y: 255
+    z: 175
+    yaw: 0
+    pitch: 0

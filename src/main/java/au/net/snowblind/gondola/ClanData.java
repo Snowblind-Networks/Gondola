@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.BannerMeta;
 
 public class ClanData {
 	private File clanDataFile;
@@ -46,6 +49,7 @@ public class ClanData {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		loadClanData();
 	}
 	
 	public boolean contains(String clan) {
@@ -60,7 +64,7 @@ public class ClanData {
 	}
 	
 	public String getMembership(Player p) {
-		return Gondola.players.get(p).playerData.getString("clan");
+		return Gondola.players.get(p).playerData.getString("clan.name");
 		
 		/*
 		ConfigurationSection cs = clanData.getConfigurationSection("clan");
@@ -71,6 +75,10 @@ public class ClanData {
 				return clan;
 		return null;
 		*/
+	}
+	
+	public String getPosition(Player p) {
+		return Gondola.players.get(p).playerData.getString("clan.position");
 	}
 	
 	public OfflinePlayer getOwner(String clan) {
@@ -95,12 +103,14 @@ public class ClanData {
 		List<String> officers = clanData.getStringList("clan." + clan + ".officers");
 		officers.add(p.getUniqueId().toString());
 		clanData.set("clan." + clan + ".officers", officers);
+		saveClanData();
 	}
 	
 	public void deleteOfficer(String clan, Player p) {
 		List<String> officers = clanData.getStringList("clan." + clan + ".officers");
 		officers.remove(p.getUniqueId().toString());
 		clanData.set("clan." + clan + ".officers", officers);
+		saveClanData();
 	}
 	
 	public List<OfflinePlayer> getMembers(String clan) {
@@ -116,11 +126,36 @@ public class ClanData {
 		List<String> members = clanData.getStringList("clan." + clan + ".officers");
 		members.add(p.getUniqueId().toString());
 		clanData.set("clan." + clan + ".officers", members);
+		saveClanData();
 	}
 	
 	public void deleteMember(String clan, Player p) {
 		List<String> members = clanData.getStringList("clan." + clan + ".members");
 		members.remove(p.getUniqueId().toString());
 		clanData.set("clan." + clan + ".members", members);
+		saveClanData();
+	}
+	
+	public ChatColor getColour(String clan) {
+		return ChatColor.valueOf(clanData.getString("clan." + clan + ".colour"));
+	}
+	
+	public void setColour(String clan, ChatColor cc) {
+		clanData.set("clan." + clan + ".colour", cc.toString());
+		saveClanData();
+	}
+	
+	public BannerMeta getBanner(String clan) {
+		return (BannerMeta) clanData.get("clan." + clan + ".banner");
+	}
+	
+	public Material getBannerType(String clan) {
+		return Material.valueOf(clanData.getString("clan." + clan + ".bannertype"));
+	}
+	
+	public void setBanner(String clan, BannerMeta meta, Material type) {
+		clanData.set("clan." + clan + ".banner", meta);
+		clanData.set("clan." + clan + ".bannertype", type.toString());
+		saveClanData();
 	}
 }

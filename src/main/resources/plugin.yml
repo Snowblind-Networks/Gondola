@@ -36,3 +36,6 @@ commands:
   delwarp:
     description: Delete a warp
     usage: /delwarp <warp>
+  setbanner:
+    description: Set your clan's banner
+    usage: /setbanner
