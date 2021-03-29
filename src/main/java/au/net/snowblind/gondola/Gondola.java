@@ -5,11 +5,14 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import au.net.snowblind.gondola.commands.CreateClanCommand;
+import au.net.snowblind.gondola.commands.DeleteClanCommand;
 import au.net.snowblind.gondola.commands.DelhomeCommand;
 import au.net.snowblind.gondola.commands.DelwarpCommand;
 import au.net.snowblind.gondola.commands.HomeCommand;
 import au.net.snowblind.gondola.commands.ListhomesCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
+import au.net.snowblind.gondola.commands.SetClanColourCommand;
 import au.net.snowblind.gondola.commands.SetbannerCommand;
 import au.net.snowblind.gondola.commands.SethomeCommand;
 import au.net.snowblind.gondola.commands.SetwarpCommand;
@@ -51,5 +54,8 @@ public class Gondola extends JavaPlugin {
 		getCommand("setwarp").setExecutor(new SetwarpCommand());
 		getCommand("delwarp").setExecutor(new DelwarpCommand());
 		getCommand("setbanner").setExecutor(new SetbannerCommand());
+		getCommand("createclan").setExecutor(new CreateClanCommand());
+		getCommand("deleteclan").setExecutor(new DeleteClanCommand());
+		getCommand("setclancolour").setExecutor(new SetClanColourCommand());
 	}
 }

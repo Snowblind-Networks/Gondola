@@ -1,9 +1,11 @@
 package au.net.snowblind.gondola.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.Tag;
-import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,27 +29,33 @@ public class SetbannerCommand implements CommandExecutor {
 					Location max = ConfigHandler.getLocation(Gondola.plugin.getConfig().getConfigurationSection("spawn.max"));
 					BoundingBox bb = BoundingBox.of(min, max);
 					
+					String clan = Gondola.clans.getMembership((Player)sender);
+					BannerMeta meta = Gondola.clans.getBanner(clan);
+					String colour = Gondola.clans.getBannerType(clan).toString().replaceFirst("_.*$", "").toLowerCase();
+					
 					for (int x = (int) bb.getMinX(); x < bb.getMaxX(); x++) {
 						for (int y = (int) bb.getMinY(); y < bb.getMaxY(); y++) {
 							for (int z = (int) bb.getMinZ(); z < bb.getMaxZ(); z++) {
 								Block bannBlock = ((Player) sender).getWorld().getBlockAt(x, y, z);
-								
 								if (!Tag.BANNERS.isTagged(bannBlock.getType()))
 									continue;
 								
 								CraftBanner banner = new CraftBanner(bannBlock);
-								String clan = Gondola.clans.getMembership((Player)sender);
-								
-								BannerMeta meta = Gondola.clans.getBanner(clan);
-								String colour = Gondola.clans.getBannerType(clan).toString().replaceFirst("_.*$", "").toLowerCase();
-								
 								BlockData bd = Gondola.plugin.getServer().createBlockData(banner.getBlockData().getAsString().replaceAll(":[a-z]*_", ":" + colour + "_"));
 								banner.setBlockData(bd);
-								banner.setPatterns(meta.getPatterns());
+								
+								if (meta != null)
+									banner.setPatterns(meta.getPatterns());
+								else
+									banner.setPatterns(new ArrayList<Pattern>());
+								
 								banner.update(true);
 							}
 						}
 					}
+					
+					
+					
 				}
 			} else {
 				if (Tag.BANNERS.isTagged(((Player)sender).getInventory().getItemInMainHand().getType())) {

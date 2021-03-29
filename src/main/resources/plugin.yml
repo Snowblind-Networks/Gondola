@@ -39,3 +39,12 @@ commands:
   setbanner:
     description: Set your clan's banner
     usage: /setbanner
+  createclan:
+    description: Create a new clan
+    usage: /createclan <name>
+  deleteclan:
+    description: Deletes the clan you own
+    usage: /deleteclan
+  setclancolour:
+    description: Set the clan colour of your clan
+    usage: /setclancolour <colour>

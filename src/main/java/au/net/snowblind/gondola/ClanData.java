@@ -1,12 +1,14 @@
 package au.net.snowblind.gondola;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -14,6 +16,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BannerMeta;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class ClanData {
 	private File clanDataFile;
@@ -30,11 +34,18 @@ public class ClanData {
 	public void createClan(String clan, Player owner) {
 		ConfigurationSection cs = clanData.getConfigurationSection("clan");
 		cs.set(clan + ".owner", owner.getUniqueId().toString());
+		cs.set(clan + ".officers", new ArrayList<String>());
+		cs.set(clan + ".members", new ArrayList<String>());
+		cs.set(clan + ".colour", "WHITE");
+		cs.set(clan + ".bannertype", "WHITE_BANNER");
+		Gondola.players.get(owner).playerData.set("clan.name", clan);
+		Gondola.players.get(owner).playerData.set("clan.position", "owner");
 		saveClanData();
 	}
 	
-	public void deleteClan(String clan) {
+	public void deleteClan(String clan, Player owner) {
 		ConfigurationSection cs = clanData.getConfigurationSection("clan");
+		Gondola.players.get(owner).playerData.set("clan", null);
 		cs.set(clan, null);
 		saveClanData();
 	}
@@ -53,7 +64,13 @@ public class ClanData {
 	}
 	
 	public boolean contains(String clan) {
-		return clanData.getConfigurationSection("clan").getKeys(false).contains(clan);
+		Set<String> clans = clanData.getConfigurationSection("clan").getKeys(false);
+		for (String c : clans) {
+			if (c.equalsIgnoreCase(clan)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean isMember(Player p, String clan) {
@@ -137,11 +154,12 @@ public class ClanData {
 	}
 	
 	public ChatColor getColour(String clan) {
-		return ChatColor.valueOf(clanData.getString("clan." + clan + ".colour"));
+		Color colour = new Color(DyeColor.valueOf(clanData.getString("clan." + clan + ".colour")).getColor().asRGB());
+		return ChatColor.of(colour);
 	}
 	
-	public void setColour(String clan, ChatColor cc) {
-		clanData.set("clan." + clan + ".colour", cc.toString());
+	public void setColour(String clan, DyeColor colour) {
+		clanData.set("clan." + clan + ".colour", colour.toString());
 		saveClanData();
 	}
 	
