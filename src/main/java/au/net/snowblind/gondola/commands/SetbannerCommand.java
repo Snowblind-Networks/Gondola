@@ -32,7 +32,7 @@ public class SetbannerCommand implements CommandExecutor {
 							for (int z = (int) bb.getMinZ(); z < bb.getMaxZ(); z++) {
 								Block bannBlock = ((Player) sender).getWorld().getBlockAt(x, y, z);
 								
-								if (!bannBlock.getType().toString().contains("BANNER"))
+								if (!Tag.BANNERS.isTagged(bannBlock.getType()))
 									continue;
 								
 								CraftBanner banner = new CraftBanner(bannBlock);
