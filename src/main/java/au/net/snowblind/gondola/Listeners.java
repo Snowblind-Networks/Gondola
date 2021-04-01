@@ -23,6 +23,11 @@ public class Listeners implements Listener {
 		Player p = e.getPlayer();
 		PlayerData data = new PlayerData(p);
 		Gondola.players.put(p, data);
+		if(!Gondola.clans.isMember(p, data.playerData.getString("clan.name"))) {
+			data.playerData.set("clan", null);
+		} else if (Gondola.clans.getPosition(p) != data.playerData.getString("clan.position")) {
+			data.playerData.set("clan.position", Gondola.clans.getPosition(p));
+		}
 	}
 	
 	@EventHandler

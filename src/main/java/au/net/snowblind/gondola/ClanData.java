@@ -47,6 +47,12 @@ public class ClanData {
 		ConfigurationSection cs = clanData.getConfigurationSection("clan");
 		Gondola.players.get(owner).playerData.set("clan", null);
 		cs.set(clan, null);
+		for (Player p : Gondola.plugin.getServer().getOnlinePlayers()) {
+			PlayerData data = Gondola.players.get(p);
+			if(!Gondola.clans.isMember(p, data.playerData.getString("clan"))) {
+				data.playerData.set("clan", null);
+			}
+		}
 		saveClanData();
 	}
 	
@@ -74,6 +80,7 @@ public class ClanData {
 	}
 	
 	public boolean isMember(Player p, String clan) {
+		if (clan == null) return false;
 		ConfigurationSection cs = clanData.getConfigurationSection("clan." + clan);
 		return cs.getString("owner").equals(p.getUniqueId().toString()) ||
 				cs.getStringList("officers").contains(p.getUniqueId().toString()) ||
