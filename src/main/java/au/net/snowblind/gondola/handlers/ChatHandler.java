@@ -63,7 +63,6 @@ public class ChatHandler {
 		// *BOLD* (test later)
 		Matcher m = p.matcher(msg);
 		
-		System.out.println(msg);
 		while (m.find()) {
 			int i = m.start();
 			String format = ChatColor.getLastColors(msg.substring(0, i));
@@ -71,7 +70,6 @@ public class ChatHandler {
 			msg = msg.substring(0, i) + newFormat + msg.substring(m.start() + 1, m.end() - 1) +
 					ChatColor.RESET + format + msg.substring(m.end());
 			m = p.matcher(msg);
-			System.out.println(msg);
 		}
 		
 		return msg;

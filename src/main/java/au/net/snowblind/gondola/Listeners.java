@@ -20,9 +20,11 @@ import au.net.snowblind.gondola.handlers.ChatHandler;
 public class Listeners implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		// TODO: if player data hash isn't there make it
 		if (!Gondola.jedis.hexists("user:" + e.getPlayer().getUniqueId().toString(), "nickname")) {
 			Gondola.jedis.hset("user:" + e.getPlayer().getUniqueId().toString(), "nickname", e.getPlayer().getDisplayName());
+		} else {
+			e.getPlayer().setDisplayName(Gondola.jedis.hget(
+					"user:" + e.getPlayer().getUniqueId().toString(), "nickname"));
 		}
 		
 		// Consistency checks

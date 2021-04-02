@@ -15,6 +15,7 @@ public class NicknameCommand implements CommandExecutor {
 				return false;
 			} else {
 				Gondola.jedis.hset("user:" + ((Player)sender).getUniqueId().toString(), "nickname", args[0]);
+				((Player) sender).setDisplayName(args[0]);
 				sender.sendMessage("Nickname set to " + args[0]);
 			}
 		} else {
