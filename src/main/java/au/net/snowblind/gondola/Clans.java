@@ -1,206 +1,180 @@
 package au.net.snowblind.gondola;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BannerMeta;
 
+import au.net.snowblind.gondola.handlers.RedisHandler;
 import net.md_5.bungee.api.ChatColor;
 
 public class Clans {
-	private File clanDataFile;
-	public FileConfiguration clanData;
 	public HashMap<Player, String> invites;
 	
 	public Clans () {
-		clanDataFile = new File(Gondola.plugin.getDataFolder(), "clans.yml");
-		if (!clanDataFile.exists())
-			Gondola.plugin.saveResource("clans.yml", false);
 		invites = new HashMap<Player, String>();
-		loadClanData();
 		
 	}
 	
 	public void createClan(String clan, Player owner) {
-		ConfigurationSection cs = clanData.createSection("clan." + clan);
-		cs.set("owner", owner.getUniqueId().toString());
-		cs.set("officers", new ArrayList<String>());
-		cs.set("members", new ArrayList<String>());
-		cs.set("colour", "WHITE");
-		cs.set("bannertype", "WHITE_BANNER");
-		PlayerData data  = Gondola.players.get(owner);
-		data.playerData.set("clan.name", clan);
-		data.playerData.set("clan.position", "owner");
-		data.savePlayerData();
-		saveClanData();
+		String id = Gondola.jedis.incr("clanid").toString();
+		Gondola.jedis.hset("clan:" + id, "name", clan);
+		Gondola.jedis.hset("clan:" + id, "owner", owner.getUniqueId().toString());
+		Gondola.jedis.hset("clan:" + id, "colour", "WHITE");
+		Gondola.jedis.hset("clan:" + id, "bannertype", "WHITE_BANNER");
+		Gondola.jedis.hset("user:" + owner.getUniqueId().toString() + ":clan", "id", id);
+		Gondola.jedis.hset("user:" + owner.getUniqueId().toString() + ":clan", "name", clan);
+		Gondola.jedis.hset("user:" + owner.getUniqueId().toString() + ":clan", "position", "owner");
+		Gondola.jedis.sadd("clans", id);
 	}
 	
-	public void deleteClan(String clan, Player owner) {
-		ConfigurationSection cs = clanData.getConfigurationSection("clan");
-		Gondola.players.get(owner).playerData.set("clan", null);
-		cs.set(clan, null);
-		for (Player p : Gondola.plugin.getServer().getOnlinePlayers()) {
-			PlayerData data = Gondola.players.get(p);
-			if(!Gondola.clans.isMember(p, data.playerData.getString("clan"))) {
-				data.playerData.set("clan", null);
-			}
+	public void deleteClan(String clanId) {
+		String owner = Gondola.jedis.hget("clan:" + clanId, "owner");
+		Set<String> officers = Gondola.jedis.smembers("clan:" + clanId + ":officers");
+		Set<String> members = Gondola.jedis.smembers("clan:" + clanId + ":members");
+		
+		Gondola.jedis.del("user:" + owner + ":clan");
+		
+		for (String officer : officers) {
+			Gondola.jedis.del("user:" + officer + ":clan");
 		}
-		saveClanData();
-	}
-	
-	public Set<String> getClans() {
-		ConfigurationSection cs;
-		if ((cs = clanData.getConfigurationSection("clan")) != null)
-			return cs.getKeys(false);
-		return new HashSet<String>();
+		
+		for (String member : members) {
+			Gondola.jedis.del("user:" + member + ":clan");
 		}
-	
-	public void loadClanData() {
-		clanData = YamlConfiguration.loadConfiguration(clanDataFile);
+		
+		Gondola.jedis.del("clan:" + clanId);
+		Gondola.jedis.del("clan:" + clanId + ":officers");
+		Gondola.jedis.del("clan:" + clanId + ":members");
+		Gondola.jedis.srem("clans", clanId);
 	}
 	
-	public void saveClanData() {
-		try {
-			clanData.save(clanDataFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+	public Map<String, String> getClans() {
+		Set<String> clanIds = Gondola.jedis.smembers("clans");
+		HashMap<String, String> clans = new HashMap<String, String>();
+		for (String id : clanIds) {
+			clans.put(Gondola.jedis.hget("clans:" + id, "name"), id);
 		}
-		loadClanData();
+		return clans;
 	}
 	
-	public boolean contains(String clan) {
-		ConfigurationSection cs = clanData.getConfigurationSection("clan");
-		if (cs == null) return false;
-		Set<String> clans = cs.getKeys(false);
-		for (String c : clans) {
-			if (c.equalsIgnoreCase(clan)) {
-				return true;
-			}
-		}
-		return false;
+	public boolean contains(String clanId) {
+		return Gondola.jedis.smembers("clans").contains(clanId);
 	}
 	
-	public boolean isMember(Player p, String clan) {
-		if (clan == null) return false;
-		ConfigurationSection cs = clanData.getConfigurationSection("clan." + clan);
-		return cs.getString("owner").equals(p.getUniqueId().toString()) ||
-				cs.getStringList("officers").contains(p.getUniqueId().toString()) ||
-				cs.getStringList("members").contains(p.getUniqueId().toString());
+	public boolean isMember(Player p, String clanId) {
+		return (Gondola.jedis.hget("user:" + p.getUniqueId().toString() + ":clan", "id")
+				.equalsIgnoreCase(clanId));
 	}
 	
 	public String getMembership(Player p) {
-		return Gondola.players.get(p).playerData.getString("clan.name");
-		
-		/*
-		ConfigurationSection cs = clanData.getConfigurationSection("clan");
-		Set<String> clans = cs.getKeys(false);
-		
-		for (String clan : clans)
-			if (isMember(p, clan))
-				return clan;
-		return null;
-		*/
+		return Gondola.jedis.hget("user:" + p.getUniqueId().toString() + ":clan", "id");
 	}
 	
-	public void removeFromClan(String clan, Player p) {
-		deleteOfficer(clan, p);
-		deleteMember(clan, p);
+	public void removeFromClan(String clanId, Player p) {
+		deleteOfficer(clanId, p);
+		deleteMember(clanId, p);
+	}
+	
+	public String getName(String clanId) {
+		return Gondola.jedis.hget("clan:" + clanId, "name");
 	}
 	
 	public String getPosition(Player p) {
-		return Gondola.players.get(p).playerData.getString("clan.position");
+		return Gondola.jedis.hget("user:" + p.getUniqueId().toString() + ":clan", "position");
 	}
 	
-	public OfflinePlayer getOwner(String clan) {
-		return Gondola.plugin.getServer().getOfflinePlayer(UUID.fromString(clanData.getString("clan." + clan + ".owner")));
+	public String getOwner(String clanId) {
+		return Gondola.jedis.hget("clan:" + clanId, "owner");
 	}
 	
-	public void setOwner(String clan, Player p) {
-		clanData.set("clan." + clan + ".owner", p.getUniqueId().toString());
-		saveClanData();
+	public String getOwnerName(String clanId) {
+		String id = getOwner(clanId);
+		return Gondola.jedis.hget("user:" + id, "nickname");
 	}
 	
-	public List<OfflinePlayer> getOfficers(String clan) {
-		List<String> playerUUIDs = clanData.getStringList("clan." + clan + ".officers");
-		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
-		for (String uuid : playerUUIDs) {
-			players.add(Gondola.plugin.getServer().getOfflinePlayer(UUID.fromString(uuid)));
+	public void setOwner(String clanId, Player p) {
+		Gondola.jedis.hset("clan:" + clanId, "owner", p.getUniqueId().toString());
+		Gondola.jedis.hset("user:" + p.getUniqueId() + ":clan", "id", clanId);
+		Gondola.jedis.hset("user:" + p.getUniqueId() + ":clan", "name", Gondola.jedis.hget("clan:" + clanId, "name"));
+		Gondola.jedis.hset("user:" + p.getUniqueId() + ":clan", "position", "owner");
+	}
+	
+	public Set<String> getOfficers(String clanId) {
+		return Gondola.jedis.smembers("clan:" + clanId + ":officers");
+	}
+
+	public Set<String> getOfficerNames(String clanId) {
+		Set<String> ids = getOfficers(clanId);
+		Set<String> names = new HashSet<String>();
+		for(String id : ids) {
+			names.add(Gondola.jedis.hget("user:" + id, "nickname"));
 		}
-		return players;
+		return names;
 	}
 	
-	public void addOfficer(String clan, Player p) {
-		List<String> officers = clanData.getStringList("clan." + clan + ".officers");
-		officers.add(p.getUniqueId().toString());
-		clanData.set("clan." + clan + ".officers", officers);
-		saveClanData();
+	public void addOfficer(String clanId, Player p) {
+		Gondola.jedis.sadd("clan:" + clanId + ":officers", p.getUniqueId().toString());
+		Gondola.jedis.hset("user:" + p.getUniqueId() + ":clan", "id", clanId);
+		Gondola.jedis.hset("user:" + p.getUniqueId() + ":clan", "name", Gondola.jedis.hget("clan:" + clanId, "name"));
+		Gondola.jedis.hset("user:" + p.getUniqueId() + ":clan", "position", "officer");
 	}
 	
-	public void deleteOfficer(String clan, Player p) {
-		List<String> officers = clanData.getStringList("clan." + clan + ".officers");
-		officers.remove(p.getUniqueId().toString());
-		clanData.set("clan." + clan + ".officers", officers);
-		saveClanData();
+	public void deleteOfficer(String clanId, Player p) {
+		Gondola.jedis.srem("clan:" + clanId + ":officers", p.getUniqueId().toString());
+		Gondola.jedis.del("user:" + p.getUniqueId() + ":clan");
 	}
 	
-	public List<OfflinePlayer> getMembers(String clan) {
-		List<String> playerUUIDs = clanData.getStringList("clan." + clan + ".members");
-		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
-		for (String uuid : playerUUIDs) {
-			players.add(Gondola.plugin.getServer().getOfflinePlayer(UUID.fromString(uuid)));
+	public Set<String> getMembers(String clanId) {
+		return Gondola.jedis.smembers("clan:" + clanId + ":members");
+	}
+	
+	public Set<String> getMemberNames(String clanId) {
+		Set<String> ids = getMembers(clanId);
+		Set<String> names = new HashSet<String>();
+		for(String id : ids) {
+			names.add(Gondola.jedis.hget("user:" + id, "nickname"));
 		}
-		return players;
+		return names;
 	}
 	
-	public void addMember(String clan, Player p) {
-		List<String> members = clanData.getStringList("clan." + clan + ".officers");
-		members.add(p.getUniqueId().toString());
-		clanData.set("clan." + clan + ".officers", members);
-		saveClanData();
+	public void addMember(String clanId, Player p) {
+		Gondola.jedis.sadd("clan:" + clanId + ":members", p.getUniqueId().toString());
+		Gondola.jedis.hset("user:" + p.getUniqueId().toString() + ":clan", "id", clanId);
+		Gondola.jedis.hset("user:" + p.getUniqueId().toString() + ":clan", "name", getName(clanId));
+		Gondola.jedis.hset("user:" + p.getUniqueId().toString() + ":clan", "position", "member");
 	}
 	
-	public void deleteMember(String clan, Player p) {
-		List<String> members = clanData.getStringList("clan." + clan + ".members");
-		members.remove(p.getUniqueId().toString());
-		clanData.set("clan." + clan + ".members", members);
-		saveClanData();
+	public void deleteMember(String clanId, Player p) {
+		Gondola.jedis.srem("clan:" + clanId + ":members", p.getUniqueId().toString());
+		Gondola.jedis.del("user:" + p.getUniqueId() + ":clan");
 	}
 	
-	public ChatColor getColour(String clan) {
-		Color colour = new Color(DyeColor.valueOf(clanData.getString("clan." + clan + ".colour")).getColor().asRGB());
+	public ChatColor getColour(String clanId) {
+		Color colour = new Color(DyeColor.valueOf(Gondola.jedis.hget("clan:" + clanId, "colour")).getColor().asRGB());
 		return ChatColor.of(colour);
 	}
 	
-	public void setColour(String clan, DyeColor colour) {
-		clanData.set("clan." + clan + ".colour", colour.toString());
-		saveClanData();
+	public void setColour(String clanId, DyeColor colour) {
+		Gondola.jedis.hset("clan:" + clanId, "colour", colour.toString());
 	}
 	
-	public BannerMeta getBanner(String clan) {
-		return (BannerMeta) clanData.get("clan." + clan + ".banner");
+	public BannerMeta getBanner(String clanId) {
+		return RedisHandler.getMeta("clan:" + clanId, "banner");
 	}
 	
-	public Material getBannerType(String clan) {
-		return Material.valueOf(clanData.getString("clan." + clan + ".bannertype"));
+	public Material getBannerType(String clanId) {
+		return Material.valueOf(Gondola.jedis.hget("clan:" + clanId, "bannertype"));
 	}
 	
-	public void setBanner(String clan, BannerMeta meta, Material type) {
-		clanData.set("clan." + clan + ".banner", meta);
-		clanData.set("clan." + clan + ".bannertype", type.toString());
-		saveClanData();
+	public void setBanner(String clanId, BannerMeta meta, Material type) {
+		RedisHandler.setMeta("clan:" + clanId, "banner", meta);
+		Gondola.jedis.hset("clan:" + clanId, "bannertype", type.toString());
 	}
 }

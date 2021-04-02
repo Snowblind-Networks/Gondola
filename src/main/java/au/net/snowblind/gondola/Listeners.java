@@ -20,20 +20,24 @@ import au.net.snowblind.gondola.handlers.ChatHandler;
 public class Listeners implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		Player p = e.getPlayer();
-		PlayerData data = new PlayerData(p);
-		Gondola.players.put(p, data);
+		// TODO: if player data hash isn't there make it
+		if (!Gondola.jedis.hexists("user:" + e.getPlayer().getUniqueId().toString(), "nickname")) {
+			Gondola.jedis.hset("user:" + e.getPlayer().getUniqueId().toString(), "nickname", e.getPlayer().getDisplayName());
+		}
+		
+		// Consistency checks
+		/*
 		if(!Gondola.clans.isMember(p, data.playerData.getString("clan.name"))) {
 			data.playerData.set("clan", null);
 		} else if (Gondola.clans.getPosition(p) != data.playerData.getString("clan.position")) {
 			data.playerData.set("clan.position", Gondola.clans.getPosition(p));
 		}
+		*/
 	}
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
-		Gondola.players.get(p).savePlayerData();
 		Gondola.clans.invites.remove(p);
 	}
 	

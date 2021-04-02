@@ -29,7 +29,6 @@ import redis.clients.jedis.Jedis;
 
 public class Gondola extends JavaPlugin {
 	public static Gondola plugin;
-	public static HashMap<Player, PlayerData> players;
 	public static VaultProviders vault;
 	public static Clans clans;
 	public static HashMap<Player, Player> teleports;
@@ -40,7 +39,6 @@ public class Gondola extends JavaPlugin {
 		Gondola.plugin = this;
 		vault = new VaultProviders();
 		clans = new Clans();
-		players = new HashMap<Player, PlayerData>();
 		teleports = new HashMap<Player, Player>();
 		jedis = new Jedis();
 		saveDefaultConfig();
@@ -52,11 +50,7 @@ public class Gondola extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		for (PlayerData data : players.values()) {
-			data.savePlayerData();
-		}
-		clans.saveClanData();
-		players.clear();
+		jedis.save();
 	}
 	
 	private void registerCommands() {

@@ -1,6 +1,6 @@
 name: Gondola
 main: au.net.snowblind.gondola.Gondola
-version: 0.1
+version: 0.2
 api-version: 1.16
 author: insyder1201
 depend: [Vault]

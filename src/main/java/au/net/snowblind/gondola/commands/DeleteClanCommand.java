@@ -24,8 +24,9 @@ public class DeleteClanCommand implements CommandExecutor {
 					sender.sendMessage("Only the clan owner can delete the clan!");
 					return true;
 				}
-				Gondola.clans.deleteClan(clan, (Player) sender);
-				sender.sendMessage("Clan " + clan + " deleted!");
+				String name = Gondola.clans.getName(clan);
+				Gondola.clans.deleteClan(clan);
+				sender.sendMessage("Clan " + name + " deleted!");
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

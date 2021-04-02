@@ -1,5 +1,13 @@
 package au.net.snowblind.gondola.handlers;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/*
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+*/
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -20,8 +28,9 @@ public class ChatHandler {
 		}
 		
 		// Set clan tag and separator (. for members, * for officers, ** for master)
-		String clan;
-		if ((clan = Gondola.clans.getMembership(p)) != null) {
+		String clanId;
+		if ((clanId = Gondola.clans.getMembership(p)) != null) {
+			String clan = Gondola.clans.getName(clanId);
 			switch (Gondola.clans.getPosition(p)) {
 				case "owner":
 					format = "**" + format;
@@ -33,21 +42,36 @@ public class ChatHandler {
 					format = "." + format;
 					break;
 				default:
-					Gondola.plugin.getLogger().warning("Player data configuration broken! Player " + p.getName() + " has a nonexistent position in its clan!");
+					Gondola.plugin.getLogger().warning("Player data broken! Player " + p.getName() + " has a nonexistent position in its clan!");
 			}
 			
-			format = Gondola.clans.getColour(clan) + clan + ChatColor.DARK_GRAY + format;
+			format = Gondola.clans.getColour(clanId) + clan + ChatColor.DARK_GRAY + format;
 		}
 		
 		return format;
 	}
 	
+	public static Pattern p = Pattern.compile("\\*[^*]*\\*");
 	public static String processMessage(String base) {
 		String msg = base;
 		if(msg.startsWith(">")) {
 			msg = ChatColor.GREEN + msg;
 		} else if (msg.startsWith("<")) {
 			msg = ChatColor.RED + msg;
+		}
+		
+		// *BOLD* (test later)
+		Matcher m = p.matcher(msg);
+		
+		System.out.println(msg);
+		while (m.find()) {
+			int i = m.start();
+			String format = ChatColor.getLastColors(msg.substring(0, i));
+			String newFormat = format + ChatColor.BOLD;
+			msg = msg.substring(0, i) + newFormat + msg.substring(m.start() + 1, m.end() - 1) +
+					ChatColor.RESET + format + msg.substring(m.end());
+			m = p.matcher(msg);
+			System.out.println(msg);
 		}
 		
 		return msg;

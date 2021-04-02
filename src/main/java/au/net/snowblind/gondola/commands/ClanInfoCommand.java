@@ -1,7 +1,5 @@
 package au.net.snowblind.gondola.commands;
 
-import java.util.stream.Collectors;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,17 +34,12 @@ public class ClanInfoCommand implements CommandExecutor {
 	}
 	
 	private static String clanInfo(String clan) {
+		String clanId = Gondola.clans.getClans().get(clan);
 		String message = "";
-		message += Gondola.clans.getColour(clan) + clan + ChatColor.RESET + "\n";
-		message += "Owner: " + Gondola.clans.getOwner(clan).getName() + "\n";
-		message += "Officers: " + String.join(", ",
-				Gondola.clans.getOfficers(clan).stream()
-				.map(player -> player.getName())
-				.collect(Collectors.toList())) + "\n";
-		message += "Members: " + String.join(", ",
-				Gondola.clans.getMembers(clan).stream()
-				.map(player -> player.getName())
-				.collect(Collectors.toList())) + "\n";
+		message += Gondola.clans.getColour(clanId) + clan + ChatColor.RESET + "\n";
+		message += "Owner: " + Gondola.clans.getOwnerName(clanId) + "\n";
+		message += "Officers: " + String.join(", ", Gondola.clans.getOfficerNames(clanId)) + "\n";
+		message += "Members: " + String.join(", ", Gondola.clans.getMemberNames(clanId)) + "\n";
 		return message;
 	}
 }

@@ -1,5 +1,7 @@
 package au.net.snowblind.gondola.commands;
 
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -18,8 +20,9 @@ public class WarpCommand implements CommandExecutor {
 			if (args.length > 1) {
 				return false;
 			} else if (args.length == 0) {
-				if (WarpHandler.getWarps() != null) {
-					sender.sendMessage("Warps: " + String.join(", ", WarpHandler.getWarps()));
+				Set<String> warps;
+				if ((warps = WarpHandler.getWarps()) != null && warps.size() > 0) {
+					sender.sendMessage("Warps: " + String.join(", ", warps));
 				} else {
 					sender.sendMessage("There are no warps set!");
 				}

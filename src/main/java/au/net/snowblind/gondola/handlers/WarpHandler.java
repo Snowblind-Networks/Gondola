@@ -22,7 +22,7 @@ public class WarpHandler {
 		ConfigurationSection cs;
 		
 		if ((cs = Gondola.plugin.getConfig().getConfigurationSection("warps." + warp)) != null) {
-			return ConfigHandler.getLocation(cs);
+			return cs.getLocation("warps." + warp);
 		} else {
 			return null;
 		}
@@ -32,7 +32,7 @@ public class WarpHandler {
 	public static void setWarp(String warp, Location loc) {
 		ConfigurationSection cs = Gondola.plugin.getConfig().createSection("warps." + warp);
 		
-		ConfigHandler.setLocation(cs, loc);
+		cs.set("warps." + warp, loc);
 		Gondola.plugin.saveConfig();
 	}
 	

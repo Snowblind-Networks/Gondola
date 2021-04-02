@@ -7,14 +7,15 @@ import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
 
-public class ListClansCommand implements CommandExecutor {
+public class NicknameCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
-			if (args.length != 0) {
+			if (args.length != 1) {
 				return false;
 			} else {
-				sender.sendMessage("Clans: " + String.join(",", Gondola.clans.getClans().keySet()));
+				Gondola.jedis.hset("user:" + ((Player)sender).getUniqueId().toString(), "nickname", args[0]);
+				sender.sendMessage("Nickname set to " + args[0]);
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");
