@@ -32,7 +32,9 @@ public class Listeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
-		Gondola.players.get(e.getPlayer()).savePlayerData();
+		Player p = e.getPlayer();
+		Gondola.players.get(p).savePlayerData();
+		Gondola.clans.invites.remove(p);
 	}
 	
 	@EventHandler

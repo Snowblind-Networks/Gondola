@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -19,27 +21,31 @@ import org.bukkit.inventory.meta.BannerMeta;
 
 import net.md_5.bungee.api.ChatColor;
 
-public class ClanData {
+public class Clans {
 	private File clanDataFile;
 	public FileConfiguration clanData;
-
-	public ClanData () {
+	public HashMap<Player, String> invites;
+	
+	public Clans () {
 		clanDataFile = new File(Gondola.plugin.getDataFolder(), "clans.yml");
 		if (!clanDataFile.exists())
 			Gondola.plugin.saveResource("clans.yml", false);
+		invites = new HashMap<Player, String>();
 		loadClanData();
 		
 	}
 	
 	public void createClan(String clan, Player owner) {
-		ConfigurationSection cs = clanData.getConfigurationSection("clan");
-		cs.set(clan + ".owner", owner.getUniqueId().toString());
-		cs.set(clan + ".officers", new ArrayList<String>());
-		cs.set(clan + ".members", new ArrayList<String>());
-		cs.set(clan + ".colour", "WHITE");
-		cs.set(clan + ".bannertype", "WHITE_BANNER");
-		Gondola.players.get(owner).playerData.set("clan.name", clan);
-		Gondola.players.get(owner).playerData.set("clan.position", "owner");
+		ConfigurationSection cs = clanData.createSection("clan." + clan);
+		cs.set("owner", owner.getUniqueId().toString());
+		cs.set("officers", new ArrayList<String>());
+		cs.set("members", new ArrayList<String>());
+		cs.set("colour", "WHITE");
+		cs.set("bannertype", "WHITE_BANNER");
+		PlayerData data  = Gondola.players.get(owner);
+		data.playerData.set("clan.name", clan);
+		data.playerData.set("clan.position", "owner");
+		data.savePlayerData();
 		saveClanData();
 	}
 	
@@ -56,11 +62,18 @@ public class ClanData {
 		saveClanData();
 	}
 	
-	private void loadClanData() {
+	public Set<String> getClans() {
+		ConfigurationSection cs;
+		if ((cs = clanData.getConfigurationSection("clan")) != null)
+			return cs.getKeys(false);
+		return new HashSet<String>();
+		}
+	
+	public void loadClanData() {
 		clanData = YamlConfiguration.loadConfiguration(clanDataFile);
 	}
 	
-	private void saveClanData() {
+	public void saveClanData() {
 		try {
 			clanData.save(clanDataFile);
 		} catch (IOException e) {
@@ -70,7 +83,9 @@ public class ClanData {
 	}
 	
 	public boolean contains(String clan) {
-		Set<String> clans = clanData.getConfigurationSection("clan").getKeys(false);
+		ConfigurationSection cs = clanData.getConfigurationSection("clan");
+		if (cs == null) return false;
+		Set<String> clans = cs.getKeys(false);
 		for (String c : clans) {
 			if (c.equalsIgnoreCase(clan)) {
 				return true;
@@ -99,6 +114,11 @@ public class ClanData {
 				return clan;
 		return null;
 		*/
+	}
+	
+	public void removeFromClan(String clan, Player p) {
+		deleteOfficer(clan, p);
+		deleteMember(clan, p);
 	}
 	
 	public String getPosition(Player p) {

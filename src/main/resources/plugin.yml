@@ -5,9 +5,15 @@ api-version: 1.16
 author: insyder1201
 depend: [Vault]
 commands:
+  help:
+    description: List commands available
+    usage: /help [section]
   tp:
     description: Request to teleport to player
     usage: /tp <player>
+  tpaccept:
+    description: Accept the latest teleport request
+    usage: /tpaccept
   msg:
     description: Privately message a player
     usage: /msg <player> <message>
@@ -36,9 +42,9 @@ commands:
   delwarp:
     description: Delete a warp
     usage: /delwarp <warp>
-  setbanner:
+  setclanbanner:
     description: Set your clan's banner
-    usage: /setbanner
+    usage: /setclanbanner
   createclan:
     description: Create a new clan
     usage: /createclan <name>
@@ -48,3 +54,18 @@ commands:
   setclancolour:
     description: Set the clan colour of your clan
     usage: /setclancolour <colour>
+  listclans:
+    description: List the currently existing clans
+    usage: /listclans
+  claninvite:
+    description: Invite player to your clan
+    usage: /claninvite <player>
+  acceptinvite:
+    description: Accept invite to clan
+    usage: /acceptinvite
+  clankick:
+    description: Kick player from your clan
+    usage: /clankick <player>
+  claninfo:
+    description: Get information on a clan
+    usage: /claninfo [clan]
