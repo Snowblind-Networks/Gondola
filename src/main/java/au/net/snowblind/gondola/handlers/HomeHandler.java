@@ -31,5 +31,6 @@ public class HomeHandler {
 	// Deletes home
 	public static void delHome(Player p, String home) {
 		Gondola.jedis.del("home:" + p.getUniqueId().toString() + ":" + home);
+		Gondola.jedis.srem("user:" + p.getUniqueId().toString() + ":homes", home);
 	}
 }

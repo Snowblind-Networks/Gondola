@@ -1,16 +1,26 @@
 warps: []
 spawn:
   min:
+    ==: org.bukkit.Location
     world: world
-    x: -175
-    y: 0
-    z: -175
-    yaw: 0
-    pitch: 0
+    x: -175.0
+    y: 0.0
+    z: -175.0
+    pitch: 0.0
+    yaw: 0.0
   max:
+    ==: org.bukkit.Location
     world: world
-    x: 175
-    y: 255
-    z: 175
-    yaw: 0
-    pitch: 0
+    x: 175.0
+    y: 255.0
+    z: 175.0
+    pitch: 0.0
+    yaw: 0.0
+  point:
+    ==: org.bukkit.Location
+    world: world
+    x: 0.0
+    y: 85.0
+    z: 0.0
+    pitch: 0.0
+    yaw: 0.0

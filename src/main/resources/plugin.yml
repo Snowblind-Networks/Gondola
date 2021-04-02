@@ -8,6 +8,15 @@ commands:
   help:
     description: List commands available
     usage: /help [section]
+  spawn:
+    description: Teleport to spawn
+    usage: /spawn
+  setspawn:
+    description: Set spawn point
+    usage: /setspawn
+  nickname:
+    description: Set your nickname
+    usage: /nickname
   tp:
     description: Request to teleport to player
     usage: /tp <player>

@@ -18,10 +18,13 @@ import au.net.snowblind.gondola.commands.InviteAcceptCommand;
 import au.net.snowblind.gondola.commands.ListClansCommand;
 import au.net.snowblind.gondola.commands.ListhomesCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
+import au.net.snowblind.gondola.commands.NicknameCommand;
 import au.net.snowblind.gondola.commands.SetClanColourCommand;
+import au.net.snowblind.gondola.commands.SetSpawnCommand;
 import au.net.snowblind.gondola.commands.SetbannerCommand;
 import au.net.snowblind.gondola.commands.SethomeCommand;
 import au.net.snowblind.gondola.commands.SetwarpCommand;
+import au.net.snowblind.gondola.commands.SpawnCommand;
 import au.net.snowblind.gondola.commands.TeleportAcceptCommand;
 import au.net.snowblind.gondola.commands.TeleportCommand;
 import au.net.snowblind.gondola.commands.WarpCommand;
@@ -55,6 +58,9 @@ public class Gondola extends JavaPlugin {
 	
 	private void registerCommands() {
 		getCommand("help").setExecutor(new HelpCommand());
+		getCommand("spawn").setExecutor(new SpawnCommand());
+		getCommand("setspawn").setExecutor(new SetSpawnCommand());
+		getCommand("nickname").setExecutor(new NicknameCommand());
 		getCommand("tp").setExecutor(new TeleportCommand());
 		getCommand("tpaccept").setExecutor(new TeleportAcceptCommand());
 		getCommand("msg").setExecutor(new MessageCommand());
