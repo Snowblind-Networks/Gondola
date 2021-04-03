@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 
 public class SetSpawnCommand implements CommandExecutor {
 	@Override
@@ -15,7 +16,7 @@ public class SetSpawnCommand implements CommandExecutor {
 				return false;
 			} else {
 				Gondola.plugin.getConfig().set("spawn.point", ((Player) sender).getLocation());
-				sender.sendMessage("Spawn point set.");
+				sender.sendMessage(ChatHandler.info("Spawn point set."));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

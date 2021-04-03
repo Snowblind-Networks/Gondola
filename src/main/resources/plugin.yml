@@ -35,10 +35,6 @@ commands:
   sethome:
     description: Set one of your homes
     usage: /sethome [home]
-  listhomes:
-    description: List your homes
-    usage: /listhomes
-    aliases: [homes]
   delhome:
     description: Delete a home
     usage: /delhome <home>
@@ -51,30 +47,24 @@ commands:
   delwarp:
     description: Delete a warp
     usage: /delwarp <warp>
-  setclanbanner:
-    description: Set your clan's banner
-    usage: /setclanbanner
+  setbanners:
+    description: Replaces spawn's banners with your clan's banners
+    usage: /setbanners
   createclan:
     description: Create a new clan
     usage: /createclan <name>
-  deleteclan:
-    description: Deletes the clan you own
-    usage: /deleteclan
-  setclancolour:
-    description: Set the clan colour of your clan
-    usage: /setclancolour <colour>
+  clan:
+    description: Clan admin commands
+    usage: /clan <command>
+  clanhome:
+    description: Teleport to your clan's home
+    usage: /clanhome
   listclans:
     description: List the currently existing clans
     usage: /listclans
-  claninvite:
-    description: Invite player to your clan
-    usage: /claninvite <player>
   acceptinvite:
     description: Accept invite to clan
     usage: /acceptinvite
-  clankick:
-    description: Kick player from your clan
-    usage: /clankick <player>
   claninfo:
     description: Get information on a clan
     usage: /claninfo [clan]

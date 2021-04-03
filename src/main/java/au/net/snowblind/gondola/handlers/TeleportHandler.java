@@ -20,7 +20,7 @@ public class TeleportHandler {
 			p.teleport(dest, TeleportCause.PLUGIN);
 		} else {
 			if (!teleports.containsKey(p)) {
-				p.sendMessage("Teleporting in 5 seconds.");
+				p.sendMessage(ChatHandler.info("Teleporting in 5 seconds..."));
 				
 				Gondola.plugin.getServer().getScheduler().scheduleSyncDelayedTask(Gondola.plugin, new Runnable() {
 					@Override
@@ -48,7 +48,7 @@ public class TeleportHandler {
 					}
 				}, 100L);
 			} else {
-				p.sendMessage("You already have a teleport queued.");
+				p.sendMessage(ChatHandler.error("You already have a teleport queued."));
 			}
 		}
 	}

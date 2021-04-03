@@ -51,18 +51,21 @@ public class ChatHandler {
 		return format;
 	}
 	
+	// Pattern to match *bold*.
 	public static Pattern p = Pattern.compile("\\*[^*]*\\*");
+	
 	public static String processMessage(String base) {
 		String msg = base;
+		
+		// >Greentext and <redtext
 		if(msg.startsWith(">")) {
 			msg = ChatColor.GREEN + msg;
 		} else if (msg.startsWith("<")) {
 			msg = ChatColor.RED + msg;
 		}
 		
-		// *BOLD* (test later)
+		// *BOLD*
 		Matcher m = p.matcher(msg);
-		
 		while (m.find()) {
 			int i = m.start();
 			String format = ChatColor.getLastColors(msg.substring(0, i));
@@ -73,5 +76,19 @@ public class ChatHandler {
 		}
 		
 		return msg;
+	}
+	
+	public static String error(String msg) {
+		return ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + ChatColor.BOLD + "!!"
+				+ ChatColor.RESET + ChatColor.DARK_GRAY + "]" + ChatColor.DARK_RED + msg;
+	}
+
+	public static String warn(String msg) {
+		return ChatColor.GRAY + "[" + ChatColor.RED + ChatColor.BOLD + "!"
+				+ ChatColor.RESET + ChatColor.GRAY + "]" + ChatColor.RED + msg;
+	}
+
+	public static String info(String msg) {
+		return "[" + ChatColor.GREEN + ChatColor.BOLD + "*" + ChatColor.RESET + "]" + ChatColor.GREEN + msg;
 	}
 }

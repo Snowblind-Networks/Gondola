@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 
 
 public class CreateClanCommand implements CommandExecutor {
@@ -16,15 +17,15 @@ public class CreateClanCommand implements CommandExecutor {
 				return false;
 			} else {
 				if (Gondola.clans.getMembership((Player) sender) != null) {
-					sender.sendMessage("You are already in a clan!");
+					sender.sendMessage(ChatHandler.error("You are already in a clan!"));
 					return true;
 				}
 				if (Gondola.clans.contains(args[0])) {
-					sender.sendMessage("The clan name " + args[0] + " is already taken!");
+					sender.sendMessage(ChatHandler.error("The clan name " + args[0] + " is already taken!"));
 					return true;
 				}
 				Gondola.clans.createClan(args[0], ((Player) sender));
-				sender.sendMessage("Clan " + args[0] + " created!");
+				sender.sendMessage(ChatHandler.info("Clan " + args[0] + " created!"));
 			}
 			
 		} else {

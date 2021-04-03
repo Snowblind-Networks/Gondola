@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 import au.net.snowblind.gondola.handlers.TeleportHandler;
 
 public class TeleportAcceptCommand implements CommandExecutor {
@@ -18,11 +19,11 @@ public class TeleportAcceptCommand implements CommandExecutor {
 			Player p = Gondola.teleports.get((Player) sender);
 			
 			if (p == null) {
-				sender.sendMessage("You don't have any teleport requests!");
+				sender.sendMessage(ChatHandler.error("You don't have any teleport requests!"));
 				return true;
 			}
 			
-			sender.sendMessage("Teleport request accepted. Teleporting...");
+			sender.sendMessage(ChatHandler.info("Teleport request accepted. Teleporting..."));
 			TeleportHandler.teleport(p, p, ((Player) sender).getLocation());
 			Gondola.teleports.remove((Player) sender);
 		} else {

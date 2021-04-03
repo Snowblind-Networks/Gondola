@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 
 public class NicknameCommand implements CommandExecutor {
 	@Override
@@ -16,7 +17,7 @@ public class NicknameCommand implements CommandExecutor {
 			} else {
 				Gondola.jedis.hset("user:" + ((Player)sender).getUniqueId().toString(), "nickname", args[0]);
 				((Player) sender).setDisplayName(args[0]);
-				sender.sendMessage("Nickname set to " + args[0]);
+				sender.sendMessage(ChatHandler.info("Nickname set to " + args[0]));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

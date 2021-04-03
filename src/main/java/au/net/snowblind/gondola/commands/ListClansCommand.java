@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 
 public class ListClansCommand implements CommandExecutor {
 	@Override
@@ -14,7 +15,7 @@ public class ListClansCommand implements CommandExecutor {
 			if (args.length != 0) {
 				return false;
 			} else {
-				sender.sendMessage("Clans: " + String.join(",", Gondola.clans.getClans().keySet()));
+				sender.sendMessage(ChatHandler.info("Clans: " + String.join(", ", Gondola.clans.getClans().keySet())));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import au.net.snowblind.gondola.handlers.ChatHandler;
 import au.net.snowblind.gondola.handlers.WarpHandler;
 
 
@@ -16,9 +17,9 @@ public class DelwarpCommand implements CommandExecutor {
 				return false;
 			} else if (WarpHandler.getWarp(args[0]) != null) {
 				WarpHandler.delWarp(args[0]);
-				sender.sendMessage("Deleted warp " + args[0]);
+				sender.sendMessage(ChatHandler.warn("Deleted warp " + args[0]));
 			} else {
-				sender.sendMessage("Warp not found: " + args[0]);
+				sender.sendMessage(ChatHandler.error("Warp not found: " + args[0]));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

@@ -11,6 +11,7 @@ import au.net.snowblind.gondola.Gondola;
 
 public class RedisHandler {
 	public static Location getLocation(String key) {
+		if (!Gondola.jedis.exists(key)) return null;
 		Map<String, String> locMap = Gondola.jedis.hgetAll(key);
 		return new Location(Gondola.plugin.getServer().getWorld(locMap.get("world")), Double.valueOf(locMap.get("x")),
 				Double.valueOf(locMap.get("y")), Double.valueOf(locMap.get("z")),

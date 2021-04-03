@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 import net.md_5.bungee.api.ChatColor;
 
 public class ClanInfoCommand implements CommandExecutor {
@@ -24,7 +25,7 @@ public class ClanInfoCommand implements CommandExecutor {
 		} else {
 			String clan = Gondola.clans.contains(args[0]) ? args[0] : null;
 			if (clan == null) {
-				sender.sendMessage("Clan does not exist!");
+				sender.sendMessage(ChatHandler.error("Clan does not exist!"));
 				return true;
 			}
 			

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -176,5 +177,13 @@ public class Clans {
 	public void setBanner(String clanId, BannerMeta meta, Material type) {
 		RedisHandler.setMeta("clan:" + clanId, "banner", meta);
 		Gondola.jedis.hset("clan:" + clanId, "bannertype", type.toString());
+	}
+	
+	public Location getHome(String clanId) {
+		return RedisHandler.getLocation("clanhome:" + clanId);
+	}
+	
+	public void setHome(String clanId, Location loc) {
+		RedisHandler.setLocation("clanhome:" + clanId, loc);
 	}
 }

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 
 public class MessageCommand implements CommandExecutor {
 	public static HashMap<Player, Player> prevMessager;
@@ -24,7 +25,7 @@ public class MessageCommand implements CommandExecutor {
 			Player p = Gondola.plugin.getServer().getPlayer(args[0]);
 			
 			if (p == null) {
-				sender.sendMessage("Player " + args[0] + " not found!");
+				sender.sendMessage(ChatHandler.error("Player " + args[0] + " not found!"));
 				return false;
 			}
 			
@@ -50,7 +51,7 @@ public class MessageCommand implements CommandExecutor {
 				p.sendMessage(ChatColor.LIGHT_PURPLE + ">> " + ((Player) sender).getDisplayName() + ": " + msg);
 				return true;
 			} else {
-				sender.sendMessage("You have nobody to reply to.");
+				sender.sendMessage(ChatHandler.error("You have nobody to reply to."));
 				return false;
 			}
 		} else {

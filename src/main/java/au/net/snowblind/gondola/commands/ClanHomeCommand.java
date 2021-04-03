@@ -6,27 +6,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
+import au.net.snowblind.gondola.handlers.TeleportHandler;
 
-
-public class DeleteClanCommand implements CommandExecutor {
+public class ClanHomeCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
-			if (args.length != 0) {
+			if (args.length > 0) {
 				return false;
 			} else {
 				String clan = Gondola.clans.getMembership((Player) sender);
 				if (clan == null) {
-					sender.sendMessage("You aren't in a clan!");
+					sender.sendMessage(ChatHandler.error("You aren't in a clan!"));
 					return true;
 				}
-				if (!(Gondola.clans.getPosition((Player)sender).equalsIgnoreCase("owner"))) {
-					sender.sendMessage("Only the clan owner can delete the clan!");
-					return true;
-				}
-				String name = Gondola.clans.getName(clan);
-				Gondola.clans.deleteClan(clan);
-				sender.sendMessage("Clan " + name + " deleted!");
+				
+				TeleportHandler.teleport(sender, (Player) sender, Gondola.clans.getHome(clan));
+				sender.sendMessage(ChatHandler.info("Teleporting to clan home."));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");
