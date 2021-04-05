@@ -24,8 +24,12 @@ public class CreateClanCommand implements CommandExecutor {
 					sender.sendMessage(ChatHandler.error("The clan name " + args[0] + " is already taken!"));
 					return true;
 				}
-				Gondola.clans.createClan(args[0], ((Player) sender));
-				sender.sendMessage(ChatHandler.info("Clan " + args[0] + " created!"));
+				if (args[0].length() > 10) {
+					sender.sendMessage(ChatHandler.error("Clan name can't be more than 10 characters!"));
+				} else {
+					Gondola.clans.createClan(args[0], ((Player) sender));
+					sender.sendMessage(ChatHandler.info("Clan " + args[0] + " created!"));
+				}
 			}
 			
 		} else {

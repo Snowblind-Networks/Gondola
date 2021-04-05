@@ -80,15 +80,15 @@ public class ChatHandler {
 	
 	public static String error(String msg) {
 		return ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + ChatColor.BOLD + "!!"
-				+ ChatColor.RESET + ChatColor.DARK_GRAY + "]" + ChatColor.DARK_RED + msg;
+				+ ChatColor.RESET + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_RED + msg;
 	}
 
 	public static String warn(String msg) {
 		return ChatColor.GRAY + "[" + ChatColor.RED + ChatColor.BOLD + "!"
-				+ ChatColor.RESET + ChatColor.GRAY + "]" + ChatColor.RED + msg;
+				+ ChatColor.RESET + ChatColor.GRAY + "] " + ChatColor.RED + msg;
 	}
 
 	public static String info(String msg) {
-		return "[" + ChatColor.GREEN + ChatColor.BOLD + "*" + ChatColor.RESET + "]" + ChatColor.GREEN + msg;
+		return "[" + ChatColor.GREEN + ChatColor.BOLD + "*" + ChatColor.RESET + "] " + ChatColor.GREEN + msg;
 	}
 }

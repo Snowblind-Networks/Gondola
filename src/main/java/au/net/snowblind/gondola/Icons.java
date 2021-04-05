@@ -12,13 +12,18 @@ public class Icons {
 			iconFolder.mkdirs();
 		icons = listFilesForFolder(iconFolder);
 	}
-
+	
+	/**
+	 * Gets all png files in a folder.
+	 * @param folder The folder to search
+	 * @return a list of all files with the PNG extension in the folder.
+	 */
 	public static ArrayList<File> listFilesForFolder(File folder) {
 		ArrayList<File> list = new ArrayList<>();
 		File[] files = folder.listFiles();
 		
-		for (byte b = 0; b < files.length; b++) {
-			File file = files[b];
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
 			if (!file.isDirectory() && 
 					file.getName().substring(file.getName().length() - 3).equalsIgnoreCase("PNG"))
 				list.add(file); 

@@ -41,11 +41,13 @@ public class Gondola extends JavaPlugin {
 		clans = new Clans();
 		teleports = new HashMap<Player, Player>();
 		jedis = new Jedis();
+		MessageCommand.prevMessager = new HashMap<Player, Player>();
+		
 		saveDefaultConfig();
 		Icons.loadIcons();
-		MessageCommand.prevMessager = new HashMap<Player, Player>();
-		getServer().getPluginManager().registerEvents(new Listeners(), this);
+		
 		registerCommands();
+		getServer().getPluginManager().registerEvents(new Listeners(), this);
 	}
 	
 	@Override
