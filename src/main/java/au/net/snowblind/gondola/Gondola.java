@@ -25,7 +25,11 @@ import au.net.snowblind.gondola.commands.SpawnCommand;
 import au.net.snowblind.gondola.commands.TeleportAcceptCommand;
 import au.net.snowblind.gondola.commands.TeleportCommand;
 import au.net.snowblind.gondola.commands.WarpCommand;
+import au.net.snowblind.gondola.handlers.RedisHandler;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
 public class Gondola extends JavaPlugin {
 	public static Gondola plugin;
@@ -34,13 +38,16 @@ public class Gondola extends JavaPlugin {
 	public static HashMap<Player, Player> teleports;
 	public static Jedis jedis;
 	
+	final JedisPoolConfig poolConfig = RedisHandler.buildPoolConfig();
+	JedisPool jedisPool = new JedisPool(poolConfig, getConfig().getString("redis.ip"), getConfig().getInt("redis.port"), Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
+	
 	@Override
 	public void onEnable() {
 		Gondola.plugin = this;
 		vault = new VaultProviders();
 		clans = new Clans();
 		teleports = new HashMap<Player, Player>();
-		jedis = new Jedis();
+		jedis = jedisPool.getResource();
 		MessageCommand.prevMessager = new HashMap<Player, Player>();
 		
 		saveDefaultConfig();

@@ -18,7 +18,7 @@ public class ClanHomeCommand implements CommandExecutor {
 			} else {
 				String clan = Gondola.clans.getMembership((Player) sender);
 				if (clan == null) {
-					sender.sendMessage(ChatHandler.error("You aren't in a clan!"));
+					sender.sendMessage(ChatHandler.error("You aren't in a clan."));
 					return true;
 				}
 				

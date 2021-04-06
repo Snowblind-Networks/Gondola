@@ -1,5 +1,6 @@
 package au.net.snowblind.gondola.handlers;
 
+import java.time.Duration;
 import java.util.Map;
 
 import org.bukkit.Location;
@@ -8,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.meta.BannerMeta;
 
 import au.net.snowblind.gondola.Gondola;
+import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisHandler {
 	public static Location getLocation(String key) {
@@ -42,5 +44,21 @@ public class RedisHandler {
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("meta", meta);
 		Gondola.jedis.hset(key, field, config.saveToString());
+	}
+	
+
+	public static JedisPoolConfig buildPoolConfig() {
+	    final JedisPoolConfig poolConfig = new JedisPoolConfig();
+	    poolConfig.setMaxTotal(128);
+	    poolConfig.setMaxIdle(128);
+	    poolConfig.setMinIdle(16);
+	    poolConfig.setTestOnBorrow(true);
+	    poolConfig.setTestOnReturn(true);
+	    poolConfig.setTestWhileIdle(true);
+	    poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
+	    poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
+	    poolConfig.setNumTestsPerEvictionRun(3);
+	    poolConfig.setBlockWhenExhausted(true);
+	    return poolConfig;
 	}
 }

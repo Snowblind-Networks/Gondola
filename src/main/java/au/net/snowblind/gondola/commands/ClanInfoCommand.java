@@ -25,7 +25,7 @@ public class ClanInfoCommand implements CommandExecutor {
 		} else {
 			String clan = Gondola.clans.contains(args[0]) ? args[0] : null;
 			if (clan == null) {
-				sender.sendMessage(ChatHandler.error("Clan does not exist!"));
+				sender.sendMessage(ChatHandler.error("Clan does not exist."));
 				return true;
 			}
 			
@@ -36,8 +36,7 @@ public class ClanInfoCommand implements CommandExecutor {
 	
 	private static String clanInfo(String clan) {
 		String clanId = Gondola.clans.getClans().get(clan);
-		String message = "";
-		message += Gondola.clans.getColour(clanId) + clan + ChatColor.RESET + "\n";
+		String message = Gondola.clans.getColour(clanId) + clan + ChatColor.RESET + "\n";
 		message += "Owner: " + Gondola.clans.getOwnerName(clanId) + "\n";
 		message += "Officers: " + String.join(", ", Gondola.clans.getOfficerNames(clanId)) + "\n";
 		message += "Members: " + String.join(", ", Gondola.clans.getMemberNames(clanId)) + "\n";

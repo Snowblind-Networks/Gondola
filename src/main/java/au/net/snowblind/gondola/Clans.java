@@ -101,6 +101,17 @@ public class Clans {
 	}
 	
 	/**
+	 * Tests whether a clan exists.
+	 * @param clanId The clan's ID.
+	 * @return whether the clan currently exists.
+	 */
+	public boolean containsName(String clan) {
+		for(String clanId : Gondola.jedis.smembers("clans"))
+			if (getName(clanId).equalsIgnoreCase(clan)) return true;
+		return false;
+	}
+	
+	/**
 	 * Sees whether player is a member of a certain clan.
 	 * @param p The player
 	 * @param clanId The clan

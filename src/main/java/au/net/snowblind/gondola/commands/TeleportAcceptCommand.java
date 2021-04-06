@@ -19,7 +19,7 @@ public class TeleportAcceptCommand implements CommandExecutor {
 			Player p = Gondola.teleports.get((Player) sender);
 			
 			if (p == null) {
-				sender.sendMessage(ChatHandler.error("You don't have any teleport requests!"));
+				sender.sendMessage(ChatHandler.error("You don't have any teleport requests."));
 				return true;
 			}
 			
@@ -27,7 +27,7 @@ public class TeleportAcceptCommand implements CommandExecutor {
 			TeleportHandler.teleport(p, p, ((Player) sender).getLocation());
 			Gondola.teleports.remove((Player) sender);
 		} else {
-			sender.sendMessage("Only players can use this command!");
+			sender.sendMessage("Only players can use this command.");
 		}
 		return true;
 	}

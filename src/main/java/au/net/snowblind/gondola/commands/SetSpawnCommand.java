@@ -12,6 +12,10 @@ public class SetSpawnCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
+			if (!Gondola.vault.permission.has(sender, "gondola.setspawn")) {
+				sender.sendMessage(ChatHandler.error("You don't have permission to run this command."));
+				return true;
+			}
 			if (args.length != 0) {
 				return false;
 			} else {

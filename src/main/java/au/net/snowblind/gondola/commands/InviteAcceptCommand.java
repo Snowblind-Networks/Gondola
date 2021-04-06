@@ -17,9 +17,9 @@ public class InviteAcceptCommand implements CommandExecutor {
 			if (args.length != 0) {
 				return false;
 			} else if (!Gondola.clans.invites.containsKey(p)) {
-				sender.sendMessage(ChatHandler.error("You have not received any invites!"));
+				sender.sendMessage(ChatHandler.error("You have not received any invites."));
 			} else if (!Gondola.clans.contains((clan = Gondola.clans.invites.get(p)))) {
-				sender.sendMessage(ChatHandler.error("That clan no longer exists!"));
+				sender.sendMessage(ChatHandler.error("That clan no longer exists."));
 			} else {
 				sender.sendMessage(ChatHandler.info("You have successfully joined clan " + clan + "."));
 				Gondola.clans.addMember(clan, p);

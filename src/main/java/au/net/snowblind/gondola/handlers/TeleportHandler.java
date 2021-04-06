@@ -20,7 +20,7 @@ public class TeleportHandler {
 			p.teleport(dest, TeleportCause.PLUGIN);
 		} else {
 			if (!teleports.containsKey(p)) {
-				p.sendMessage(ChatHandler.info("Teleporting in 5 seconds..."));
+				p.sendMessage(ChatHandler.info("Teleporting in 5 seconds, don't move."));
 				
 				Gondola.plugin.getServer().getScheduler().scheduleSyncDelayedTask(Gondola.plugin, new Runnable() {
 					@Override
@@ -37,12 +37,12 @@ public class TeleportHandler {
 							if (teleports.get(p) == dest) {
 								p.teleport(dest, TeleportCause.PLUGIN);
 							} else if (!teleports.containsKey(p)) {
-								p.sendMessage("Teleport has been cancelled.");
+								p.sendMessage(ChatHandler.error("Teleport has been cancelled."));
 							} else {
-								p.sendMessage("Too many teleport requests!");
+								p.sendMessage(ChatHandler.error("Too many teleport requests!"));
 							}
 						} else {
-							p.sendMessage("No moving during teleports!");
+							p.sendMessage(ChatHandler.error("No moving during teleports!"));
 						}
 						teleports.remove(p);
 					}

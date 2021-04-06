@@ -19,13 +19,11 @@ public class ClanCommand implements CommandExecutor {
 		if (sender instanceof Player) {
 			String clan = Gondola.clans.getMembership((Player) sender);
 			if (clan == null) {
-				sender.sendMessage(ChatHandler.error("You aren't in a clan!"));
+				sender.sendMessage(ChatHandler.error("You aren't in a clan."));
 				return true;
 			}
 			
-			if (args.length > 2) {
-				return false;
-			} else if (args.length == 0) {
+			if (args.length == 0) {
 				sender.sendMessage(usage());
 			} else if (args[0].equalsIgnoreCase("sethome")) {
 				Gondola.clans.setHome(clan, ((Player)sender).getLocation());
@@ -59,7 +57,7 @@ public class ClanCommand implements CommandExecutor {
 					Gondola.clans.setBanner(Gondola.clans.getMembership((Player)sender), meta, banner.getType());
 					sender.sendMessage(ChatHandler.info("Clan banner set."));
 				} else {
-					sender.sendMessage(ChatHandler.warn("Hold a banner in your hand and run this command again!"));
+					sender.sendMessage(ChatHandler.warn("Hold a banner in your hand and run this command again."));
 				}
 			} else if (args[0].equalsIgnoreCase("invite")) {
 				if (args.length != 2) {
@@ -73,7 +71,7 @@ public class ClanCommand implements CommandExecutor {
 				} else if (Gondola.clans.getPosition((Player) sender).equalsIgnoreCase("member")) {
 					sender.sendMessage(ChatHandler.error("Only the clan owner and officers can invite members."));
 				} else if (((Player) sender).equals(p)) {
-					sender.sendMessage(ChatHandler.error("You can't invite yourself!"));
+					sender.sendMessage(ChatHandler.error("You can't invite yourself."));
 				} else {
 					Gondola.clans.invites.put(p, clan);
 					p.sendMessage(ChatHandler.info("You have just been invited to " + clan + " by "
@@ -111,7 +109,7 @@ public class ClanCommand implements CommandExecutor {
 				if ((p = Gondola.plugin.getServer().getPlayer(args[1])) == null) {
 					sender.sendMessage(ChatHandler.error("Can't find player " + args[1] + "."));
 				} else if (!Gondola.clans.getPosition((Player) sender).equalsIgnoreCase("owner")) {
-					sender.sendMessage(ChatHandler.error("Only the clan owner can promote members!"));
+					sender.sendMessage(ChatHandler.error("Only the clan owner can promote members."));
 				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
 					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
 				} else if (!Gondola.clans.getPosition(p).equalsIgnoreCase("member")) {
@@ -131,7 +129,7 @@ public class ClanCommand implements CommandExecutor {
 				if ((p = Gondola.plugin.getServer().getPlayer(args[1])) == null) {
 					sender.sendMessage(ChatHandler.error("Can't find player " + args[1] + "."));
 				} else if (!Gondola.clans.getPosition((Player) sender).equalsIgnoreCase("owner")) {
-					sender.sendMessage(ChatHandler.error("Only the clan owner can demote members!"));
+					sender.sendMessage(ChatHandler.error("Only the clan owner can demote members."));
 				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
 					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
 				} else if (!Gondola.clans.getPosition(p).equalsIgnoreCase("officer")) {
@@ -142,12 +140,12 @@ public class ClanCommand implements CommandExecutor {
 				}
 			} else if (args[0].equalsIgnoreCase("delete")) {
 				if (!(Gondola.clans.getPosition((Player)sender).equalsIgnoreCase("owner"))) {
-					sender.sendMessage(ChatHandler.error("Only the clan owner can delete the clan!"));
+					sender.sendMessage(ChatHandler.error("Only the clan owner can delete the clan."));
 					return true;
 				}
 				String name = Gondola.clans.getName(clan);
 				Gondola.clans.deleteClan(clan);
-				sender.sendMessage(ChatHandler.warn("Clan " + name + " deleted!"));
+				sender.sendMessage(ChatHandler.warn("Clan " + name + " deleted."));
 			} else if (args[0].equalsIgnoreCase("changeowner")) {
 				if (args.length != 2) {
 					sender.sendMessage(ChatHandler.warn("Usage: /clan changeowner <player>"));
@@ -158,7 +156,7 @@ public class ClanCommand implements CommandExecutor {
 				if ((p = Gondola.plugin.getServer().getPlayer(args[1])) == null) {
 					sender.sendMessage(ChatHandler.error("Can't find player " + args[1] + "."));
 				} else if (!Gondola.clans.getPosition((Player) sender).equalsIgnoreCase("owner")) {
-					sender.sendMessage(ChatHandler.error("Only the clan owner designate the new clan owner!"));
+					sender.sendMessage(ChatHandler.error("Only the clan owner designate the new clan owner."));
 				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
 					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
 				} else {

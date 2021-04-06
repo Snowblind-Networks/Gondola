@@ -24,12 +24,13 @@ public class WarpCommand implements CommandExecutor {
 				if ((warps = WarpHandler.getWarps()) != null && warps.size() > 0) {
 					sender.sendMessage(ChatHandler.info("Warps: " + String.join(", ", warps)));
 				} else {
-					sender.sendMessage(ChatHandler.error("There are no warps set!"));
+					sender.sendMessage(ChatHandler.error("There are no warps set."));
 				}
 			} else if ((warp = WarpHandler.getWarp(args[0])) == null) {
-				sender.sendMessage(ChatHandler.error("Invalid warp: " + args[0]));
+				sender.sendMessage(ChatHandler.error("Invalid warp: " + args[0] + "."));
 			} else {
 				TeleportHandler.teleport(sender, (Player) sender, warp);
+				sender.sendMessage(ChatHandler.info("Warping to " + args[0] + "."));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

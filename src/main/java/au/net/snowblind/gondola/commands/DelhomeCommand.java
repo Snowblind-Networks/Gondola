@@ -17,10 +17,10 @@ public class DelhomeCommand implements CommandExecutor {
 				return false;
 			} else {
 				if (args[0].equals("default")) {
-					sender.sendMessage(ChatHandler.error("You cannot delete your default home!"));
+					sender.sendMessage(ChatHandler.error("You cannot delete your default home."));
 				} else {
 					HomeHandler.delHome((Player) sender, args[0]);
-					sender.sendMessage(ChatHandler.warn("Deleted home " + args[0]));
+					sender.sendMessage(ChatHandler.warn("Deleted home " + args[0] + "."));
 				}
 			}
 			

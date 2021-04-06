@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 import au.net.snowblind.gondola.handlers.TeleportHandler;
 
 public class SpawnCommand implements CommandExecutor {
@@ -18,6 +19,7 @@ public class SpawnCommand implements CommandExecutor {
 			} else {
 				Location spawn = Gondola.plugin.getConfig().getLocation("spawn.point");
 				TeleportHandler.teleport(sender, (Player) sender, spawn);
+				sender.sendMessage(ChatHandler.info("Teleporting to spawn."));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

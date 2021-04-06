@@ -18,7 +18,7 @@ public class TeleportCommand implements CommandExecutor {
 			Player p = Gondola.plugin.getServer().getPlayer(args[0]);
 			
 			if (p == null) {
-				sender.sendMessage(ChatHandler.error("Player " + args[0] + " not found!"));
+				sender.sendMessage(ChatHandler.error("Player " + args[0] + " not found."));
 				return false;
 			}
 			Gondola.teleports.put(p, (Player) sender);

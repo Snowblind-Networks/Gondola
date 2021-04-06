@@ -17,11 +17,16 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.util.BoundingBox;
 
 import au.net.snowblind.gondola.Gondola;
+import au.net.snowblind.gondola.handlers.ChatHandler;
 
 public class SetbannerCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
+			if (!Gondola.vault.permission.has(sender, "gondola.setbanner")) {
+				sender.sendMessage(ChatHandler.error("You don't have permission to run this command."));
+				return true;
+			}
 			ConfigurationSection cs = Gondola.plugin.getConfig().getConfigurationSection("spawn");
 			Location min = cs.getLocation("min");
 			Location max = cs.getLocation("max");

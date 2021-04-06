@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import au.net.snowblind.gondola.handlers.ChatHandler;
+import net.md_5.bungee.api.ChatColor;
 
 public class Listeners implements Listener {
 	@EventHandler
@@ -69,6 +70,14 @@ public class Listeners implements Listener {
 						" has an invalid position '" + position + "' within its clan.");
 			}
 		}
+		
+		// Display join message only if more than 20 players are on
+		if (Gondola.plugin.getServer().getOnlinePlayers().size() > 20) {
+			e.setJoinMessage(null);
+		} else {
+			e.setJoinMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "+" + ChatColor.DARK_GRAY + "] " + ChatColor.RESET + p.getDisplayName());
+		}
+		
 	}
 	
 	@EventHandler
@@ -76,6 +85,13 @@ public class Listeners implements Listener {
 		Player p = e.getPlayer();
 		Gondola.clans.invites.remove(p);
 		Gondola.teleports.remove(p);
+		
+		// Display quit message only if more than 20 players are on
+		if (Gondola.plugin.getServer().getOnlinePlayers().size() > 20) {
+			e.setQuitMessage(null);
+		} else {
+			e.setQuitMessage(ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + "-" + ChatColor.DARK_GRAY + "] " + ChatColor.RESET + p.getDisplayName());
+		}
 	}
 	
 	@EventHandler

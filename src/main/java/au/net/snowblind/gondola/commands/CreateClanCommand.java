@@ -17,18 +17,18 @@ public class CreateClanCommand implements CommandExecutor {
 				return false;
 			} else {
 				if (Gondola.clans.getMembership((Player) sender) != null) {
-					sender.sendMessage(ChatHandler.error("You are already in a clan!"));
+					sender.sendMessage(ChatHandler.error("You are already in a clan."));
 					return true;
 				}
-				if (Gondola.clans.contains(args[0])) {
-					sender.sendMessage(ChatHandler.error("The clan name " + args[0] + " is already taken!"));
+				if (Gondola.clans.containsName(args[0])) {
+					sender.sendMessage(ChatHandler.error("The clan name " + args[0] + " is already taken."));
 					return true;
 				}
 				if (args[0].length() > 10) {
-					sender.sendMessage(ChatHandler.error("Clan name can't be more than 10 characters!"));
+					sender.sendMessage(ChatHandler.error("Clan name can't be more than 10 characters."));
 				} else {
 					Gondola.clans.createClan(args[0], ((Player) sender));
-					sender.sendMessage(ChatHandler.info("Clan " + args[0] + " created!"));
+					sender.sendMessage(ChatHandler.info("Clan " + args[0] + " created."));
 				}
 			}
 			
