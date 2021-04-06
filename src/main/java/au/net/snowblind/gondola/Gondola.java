@@ -18,7 +18,7 @@ import au.net.snowblind.gondola.commands.ListClansCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
 import au.net.snowblind.gondola.commands.NicknameCommand;
 import au.net.snowblind.gondola.commands.SetSpawnCommand;
-import au.net.snowblind.gondola.commands.SetbannerCommand;
+import au.net.snowblind.gondola.commands.UpdateSpawnCommand;
 import au.net.snowblind.gondola.commands.SethomeCommand;
 import au.net.snowblind.gondola.commands.SetwarpCommand;
 import au.net.snowblind.gondola.commands.SpawnCommand;
@@ -77,7 +77,7 @@ public class Gondola extends JavaPlugin {
 		getCommand("warp").setExecutor(new WarpCommand());
 		getCommand("setwarp").setExecutor(new SetwarpCommand());
 		getCommand("delwarp").setExecutor(new DelwarpCommand());
-		getCommand("setbanners").setExecutor(new SetbannerCommand());
+		getCommand("updatespawn").setExecutor(new UpdateSpawnCommand());
 		getCommand("createclan").setExecutor(new CreateClanCommand());
 		getCommand("clan").setExecutor(new ClanCommand());
 		getCommand("clanhome").setExecutor(new ClanHomeCommand());

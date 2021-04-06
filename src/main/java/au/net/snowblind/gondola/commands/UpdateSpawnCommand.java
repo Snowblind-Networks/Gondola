@@ -3,6 +3,7 @@ package au.net.snowblind.gondola.commands;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
@@ -19,11 +20,11 @@ import org.bukkit.util.BoundingBox;
 import au.net.snowblind.gondola.Gondola;
 import au.net.snowblind.gondola.handlers.ChatHandler;
 
-public class SetbannerCommand implements CommandExecutor {
+public class UpdateSpawnCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
-			if (!Gondola.vault.permission.has(sender, "gondola.setbanner")) {
+			if (!Gondola.vault.permission.has(sender, "gondola.updatespawn")) {
 				sender.sendMessage(ChatHandler.error("You don't have permission to run this command."));
 				return true;
 			}
@@ -39,20 +40,24 @@ public class SetbannerCommand implements CommandExecutor {
 			for (int x = (int) bb.getMinX(); x < bb.getMaxX(); x++) {
 				for (int y = (int) bb.getMinY(); y < bb.getMaxY(); y++) {
 					for (int z = (int) bb.getMinZ(); z < bb.getMaxZ(); z++) {
-						Block bannBlock = ((Player) sender).getWorld().getBlockAt(x, y, z);
-						if (!Tag.BANNERS.isTagged(bannBlock.getType()))
+						Block b = ((Player) sender).getWorld().getBlockAt(x, y, z);
+						if (Tag.BANNERS.isTagged(b.getType())) {	
+							CraftBanner banner = new CraftBanner(b);
+							BlockData bd = Gondola.plugin.getServer().createBlockData(banner.getBlockData().getAsString().replaceAll(":[a-z]*_", ":" + colour + "_"));
+							banner.setBlockData(bd);
+							
+							if (meta != null)
+								banner.setPatterns(meta.getPatterns());
+							else
+								banner.setPatterns(new ArrayList<Pattern>());
+							
+							banner.update(true);
+						} else if (b.getType().toString().endsWith("_CONCRETE")) {
+							String clanColour = Gondola.clans.getColourString(clan);
+							b.setType(Material.valueOf(clanColour + "_CONCRETE"));
+						} else {
 							continue;
-						
-						CraftBanner banner = new CraftBanner(bannBlock);
-						BlockData bd = Gondola.plugin.getServer().createBlockData(banner.getBlockData().getAsString().replaceAll(":[a-z]*_", ":" + colour + "_"));
-						banner.setBlockData(bd);
-						
-						if (meta != null)
-							banner.setPatterns(meta.getPatterns());
-						else
-							banner.setPatterns(new ArrayList<Pattern>());
-						
-						banner.update(true);
+						}
 					}
 				}
 			}

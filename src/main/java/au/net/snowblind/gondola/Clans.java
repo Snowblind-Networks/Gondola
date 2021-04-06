@@ -306,8 +306,22 @@ public class Clans {
 		 * converted to an RGB int, constructed into a java.awt.Colour,
 		 * and converted into a Bungee ChatColor.
 		 */
-		Color colour = new Color(DyeColor.valueOf(Gondola.jedis.hget("clan:" + clanId, "colour")).getColor().asRGB());
+		Color colour = new Color(DyeColor.valueOf(getColourString(clanId)).getColor().asRGB());
 		return ChatColor.of(colour);
+	}
+	
+	/**
+	 * Gets the colour string of the clan (for use in spawn).
+	 * @param clanId The clan's ID.
+	 * @return the String of the DyeColor of the clan.
+	 */
+	public String getColourString(String clanId) {
+		/*
+		 * Colour is retrieved as a DyeColor string, converted to org.bukkit.Color,
+		 * converted to an RGB int, constructed into a java.awt.Colour,
+		 * and converted into a Bungee ChatColor.
+		 */
+		return (Gondola.jedis.hget("clan:" + clanId, "colour"));
 	}
 	
 	/**

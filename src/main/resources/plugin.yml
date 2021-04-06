@@ -14,12 +14,15 @@ commands:
   setspawn:
     description: Set spawn point
     usage: /setspawn
-  nickname:
+    permission: gondola.setspawn
+  nick:
     description: Set your nickname
     usage: /nickname
+    permission: gondola.nickname
   tp:
     description: Request to teleport to player
     usage: /tp <player>
+    aliases: [tpa]
   tpaccept:
     description: Accept the latest teleport request
     usage: /tpaccept
@@ -44,27 +47,36 @@ commands:
   setwarp:
     description: Set a warp
     usage: /setwarp [warp]
+    permission: gondola.setwarp
   delwarp:
     description: Delete a warp
     usage: /delwarp <warp>
-  setbanners:
+    permission: gondola.delwarp
+  updatespawn:
     description: Replaces spawn's banners with your clan's banners
-    usage: /setbanners
+    usage: /updatespawn
+    permission: gondola.updatespawn
   createclan:
     description: Create a new clan
     usage: /createclan <name>
+    aliases: [ccreate]
   clan:
     description: Clan admin commands
     usage: /clan <command>
+    aliases: [c]
   clanhome:
     description: Teleport to your clan's home
     usage: /clanhome
+    aliases: [chome]
   listclans:
     description: List the currently existing clans
     usage: /listclans
+    aliases: [clist]
   acceptinvite:
     description: Accept invite to clan
     usage: /acceptinvite
+    aliases: [accept]
   claninfo:
     description: Get information on a clan
     usage: /claninfo [clan]
+    aliases: [cinfo]
