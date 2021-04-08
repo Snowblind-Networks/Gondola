@@ -12,9 +12,11 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import au.net.snowblind.gondola.handlers.ChatHandler;
 import net.md_5.bungee.api.ChatColor;
@@ -28,6 +30,8 @@ public class Listeners implements Listener {
 		if (Gondola.jedis.hexists("user:" + uuid, "nickname")) {
 			e.getPlayer().setDisplayName(Gondola.jedis.hget(
 					"user:" + uuid, "nickname"));
+		} else {
+			Gondola.jedis.hset("user:" + uuid, "nickname", e.getPlayer().getDisplayName());
 		}
 		
 		// Consistency checks
@@ -124,5 +128,18 @@ public class Listeners implements Listener {
 	    	head.setItemMeta(sm);
 			e.getDrops().add(head);
 		}
+	}
+	
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent e) {
+		if (!(e.isBedSpawn() || e.isAnchorSpawn())) {
+			e.setRespawnLocation(Gondola.plugin.getConfig().getLocation("spawn.point"));
+		}
+	}
+	
+	@EventHandler
+	public void onFirstSpawn(PlayerSpawnLocationEvent e) {
+		if (!e.getPlayer().hasPlayedBefore())
+			e.setSpawnLocation(Gondola.plugin.getConfig().getLocation("spawn.point"));
 	}
 }

@@ -35,15 +35,17 @@ public class UpdateSpawnCommand implements CommandExecutor {
 			
 			String clan = Gondola.clans.getMembership((Player)sender);
 			BannerMeta meta = Gondola.clans.getBanner(clan);
-			String colour = Gondola.clans.getBannerType(clan).toString().replaceFirst("_.*$", "").toLowerCase();
+			String colour = Gondola.clans.getBannerType(clan).toString().replaceFirst("_BANNER$", "").toLowerCase();
 			
 			for (int x = (int) bb.getMinX(); x < bb.getMaxX(); x++) {
 				for (int y = (int) bb.getMinY(); y < bb.getMaxY(); y++) {
 					for (int z = (int) bb.getMinZ(); z < bb.getMaxZ(); z++) {
 						Block b = ((Player) sender).getWorld().getBlockAt(x, y, z);
 						if (Tag.BANNERS.isTagged(b.getType())) {	
+							if (isExcluded(x, y, z)) continue;
 							CraftBanner banner = new CraftBanner(b);
-							BlockData bd = Gondola.plugin.getServer().createBlockData(banner.getBlockData().getAsString().replaceAll(":[a-z]*_", ":" + colour + "_"));
+							
+							BlockData bd = Gondola.plugin.getServer().createBlockData(replaceBanners(banner.getBlockData().getAsString(), colour));
 							banner.setBlockData(bd);
 							
 							if (meta != null)
@@ -65,5 +67,18 @@ public class UpdateSpawnCommand implements CommandExecutor {
 			sender.sendMessage("This command can only be run by a player!");
 		}
 		return true;
+	}
+	
+	private String replaceBanners(String msg, String colour) {
+		String res = msg.replaceAll(":(.*)(_wall_banner)", ":" + colour.toLowerCase() + "_wall_FDFSASDF");
+		res = res.replaceAll(":(.*)(?=_banner)", ":" + colour.toLowerCase());
+		res = res.replaceAll("_wall_FDFSASDF", "_wall_banner");
+		return res;
+	}
+	
+	private boolean isExcluded(int x, int y, int z) {
+		if ((Math.abs(x) <= 10 && Math.abs(z) >= 124 && Math.abs(z) <= 134) ||
+				(Math.abs(z) <= 10 && Math.abs(x) >= 124 && Math.abs(x) <= 134)) return true;
+		return false;
 	}
 }

@@ -74,6 +74,7 @@ public class ClanCommand implements CommandExecutor {
 					sender.sendMessage(ChatHandler.error("You can't invite yourself."));
 				} else {
 					Gondola.clans.invites.put(p, clan);
+					((Player) sender).sendMessage(ChatHandler.info("You have invited " + p.getDisplayName() + " to your clan."));
 					p.sendMessage(ChatHandler.info("You have just been invited to " + clan + " by "
 							+ ((Player) sender).getDisplayName()
 							+ ". Type /acceptinvite to accept."));
@@ -96,12 +97,13 @@ public class ClanCommand implements CommandExecutor {
 					sender.sendMessage(ChatHandler.error("You don't have permission to kick " + args[1] + "."));
 				} else {
 					Gondola.clans.removeFromClan(clan, p);
+					((Player) sender).sendMessage(ChatHandler.info("You have kicked " + p.getDisplayName() + " to your clan."));
 					p.sendMessage(ChatHandler.warn("You have been kicked from your clan by "
 							+ ((Player) sender).getDisplayName() + "."));
 				}
 			} else if (args[0].equalsIgnoreCase("promote")) {
 				if (args.length != 2) {
-					sender.sendMessage(ChatHandler.warn("Usage: /clan kick <player>"));
+					sender.sendMessage(ChatHandler.warn("Usage: /clan promote <player>"));
 					return true;
 				}
 				
@@ -115,13 +117,16 @@ public class ClanCommand implements CommandExecutor {
 				} else if (!Gondola.clans.getPosition(p).equalsIgnoreCase("member")) {
 					sender.sendMessage(ChatHandler.error("You can't promote " + args[1] + " further."));
 				} else {
+					((Player) sender).sendMessage(ChatHandler.info("You have promoted " + p.getDisplayName() + " to clan officer."));
+					p.sendMessage(ChatHandler.info("You have just been promoted to clan officer by "
+							+ ((Player) sender).getDisplayName() + "."));
 					Gondola.clans.deleteMember(clan, p);
 					Gondola.clans.addOfficer(clan, p);
 				}
 				return true;
 			} else if (args[0].equalsIgnoreCase("demote")) {
 				if (args.length != 2) {
-					sender.sendMessage(ChatHandler.warn("Usage: /clan kick <player>"));
+					sender.sendMessage(ChatHandler.warn("Usage: /clan demote <player>"));
 					return true;
 				}
 				
@@ -135,6 +140,9 @@ public class ClanCommand implements CommandExecutor {
 				} else if (!Gondola.clans.getPosition(p).equalsIgnoreCase("officer")) {
 					sender.sendMessage(ChatHandler.error("You can't demote " + args[1] + " further."));
 				} else {
+					((Player) sender).sendMessage(ChatHandler.info("You have demoted " + p.getDisplayName() + " to clan member."));
+					p.sendMessage(ChatHandler.info("You have just been demoted to clan member by "
+							+ ((Player) sender).getDisplayName() + "."));
 					Gondola.clans.deleteOfficer(clan, p);
 					Gondola.clans.addMember(clan, p);
 				}
@@ -160,6 +168,8 @@ public class ClanCommand implements CommandExecutor {
 				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
 					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
 				} else {
+					sender.sendMessage(ChatHandler.info("Clan owner set to " + args[1] + "."));
+					p.sendMessage(ChatHandler.info("You are the new owner of your clan."));
 					Gondola.clans.removeFromClan(clan, p);
 					Gondola.clans.setOwner(clan, p);
 					Gondola.clans.addOfficer(clan, ((Player) sender));

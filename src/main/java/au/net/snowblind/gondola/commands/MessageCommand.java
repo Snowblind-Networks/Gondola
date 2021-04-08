@@ -49,6 +49,7 @@ public class MessageCommand implements CommandExecutor {
 				String msg = String.join(" ", args); 
 				sender.sendMessage(ChatColor.LIGHT_PURPLE + ((Player) sender).getDisplayName() + ">> " + msg);
 				p.sendMessage(ChatColor.LIGHT_PURPLE + ">> " + ((Player) sender).getDisplayName() + ": " + msg);
+				prevMessager.put(p, (Player) sender);
 				return true;
 			} else {
 				sender.sendMessage(ChatHandler.error("You have nobody to reply to."));

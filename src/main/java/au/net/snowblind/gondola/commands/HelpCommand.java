@@ -38,6 +38,9 @@ public class HelpCommand implements CommandExecutor {
 			message += entry("/msg", "<player>", "Send someone a private message");
 			message += entry("/r", "", "Reply to a private message");
 			message += entry("/nickname", "", "Set your nickname");
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("getting-started")) {
+			message = ChatColor.BOLD + "Chat commands" + ChatColor.RESET + ":\n";
+			message += entry("/msg", "<player>", "Send someone a private message");
 		} else {
 			message = ChatColor.BOLD + "Useful commands" + ChatColor.RESET + ":\n";
 			message += entry("/spawn", "", "Teleport to spawn");

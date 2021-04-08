@@ -3,7 +3,7 @@ main: au.net.snowblind.gondola.Gondola
 version: 0.2
 api-version: 1.16
 author: insyder1201
-depend: [Vault]
+depend: [Vault, PlaceholderAPI]
 commands:
   help:
     description: List commands available
@@ -19,6 +19,9 @@ commands:
     description: Set your nickname
     usage: /nickname
     permission: gondola.nickname
+  realname:
+    description: See a player's IGN
+    usage: /realname <nickname>
   tp:
     description: Request to teleport to player
     usage: /tp <player>
@@ -80,3 +83,7 @@ commands:
     description: Get information on a clan
     usage: /claninfo [clan]
     aliases: [cinfo]
+  clanleave:
+    description: Leave your current clan
+    usage: /clanleave
+    aliases: [cleave]

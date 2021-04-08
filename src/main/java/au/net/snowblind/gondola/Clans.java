@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BannerMeta;
 
+import au.net.snowblind.gondola.handlers.ChatHandler;
 import au.net.snowblind.gondola.handlers.RedisHandler;
 import net.md_5.bungee.api.ChatColor;
 
@@ -64,10 +66,18 @@ public class Clans {
 		
 		for (String officer : officers) {
 			Gondola.jedis.del("user:" + officer + ":clan");
+			Player p = Gondola.plugin.getServer().getPlayer(UUID.fromString(officer));
+			if (p != null) {
+				p.sendMessage(ChatHandler.warn("The clan you are in has been deleted."));
+			}
 		}
 		
 		for (String member : members) {
 			Gondola.jedis.del("user:" + member + ":clan");
+			Player p = Gondola.plugin.getServer().getPlayer(UUID.fromString(member));
+			if (p != null) {
+				p.sendMessage(ChatHandler.warn("The clan you are in has been deleted."));
+			}
 		}
 		
 		// Delete clan data
@@ -79,14 +89,14 @@ public class Clans {
 	
 	/**
 	 * Gets existing clans.
-	 * @return a map of clanIDs to clan names for each existing clan.
+	 * @return a map of clan names to clan IDs for each existing clan.
 	 */
 	public Map<String, String> getClans() {
 		Set<String> clanIds = Gondola.jedis.smembers("clans");
 		HashMap<String, String> clans = new HashMap<String, String>();
 		
 		for (String id : clanIds) {
-			clans.put(Gondola.jedis.hget("clans:" + id, "name"), id);
+			clans.put(Gondola.jedis.hget("clan:" + id, "name"), id);
 		}
 		return clans;
 	}
@@ -316,11 +326,6 @@ public class Clans {
 	 * @return the String of the DyeColor of the clan.
 	 */
 	public String getColourString(String clanId) {
-		/*
-		 * Colour is retrieved as a DyeColor string, converted to org.bukkit.Color,
-		 * converted to an RGB int, constructed into a java.awt.Colour,
-		 * and converted into a Bungee ChatColor.
-		 */
 		return (Gondola.jedis.hget("clan:" + clanId, "colour"));
 	}
 	
@@ -378,5 +383,28 @@ public class Clans {
 	 */
 	public void setHome(String clanId, Location loc) {
 		RedisHandler.setLocation("clanhome:" + clanId, loc);
+	}
+	
+	public int getPoints(String clanId) {
+		return 0;
+	}
+	
+	public boolean underInfluence(String clanId, Location loc) {
+		Location home = getHome(clanId);
+		if (!loc.getWorld().equals(home.getWorld())) return false;
+		return (home.distance(loc) < getPoints(clanId));
+	}
+	
+	public String getInfluence(Location loc) {
+		Set<String> clans = Gondola.jedis.smembers("clans");
+		String max = "";
+		
+		for (String clan : clans) {
+			if (underInfluence(clan, loc)) {
+				if (max.equals("")) max = clan;
+				else if (getPoints(clan) > getPoints(max)) max = clan;
+			}
+		}
+		return (max == "") ? null : max;
 	}
 }

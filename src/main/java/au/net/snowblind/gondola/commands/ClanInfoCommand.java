@@ -15,11 +15,11 @@ public class ClanInfoCommand implements CommandExecutor {
 		if (args.length > 1) {
 			return false;
 		} else if (args.length == 0) {
-			String clan = Gondola.clans.getMembership((Player) sender);
-			if (clan == null) {
+			String clanId = Gondola.clans.getMembership((Player) sender);
+			if (clanId == null) {
 				return false;
 			} else {
-				sender.sendMessage(clanInfo(clan));
+				sender.sendMessage(clanInfo(clanId));
 				return true;
 			}
 		} else {
@@ -29,13 +29,14 @@ public class ClanInfoCommand implements CommandExecutor {
 				return true;
 			}
 			
-			sender.sendMessage(clanInfo(clan));
+			String clanId = Gondola.clans.getClans().get(clan);
+			sender.sendMessage(clanInfo(clanId));
 			return true;
 		}	
 	}
 	
-	private static String clanInfo(String clan) {
-		String clanId = Gondola.clans.getClans().get(clan);
+	private static String clanInfo(String clanId) {
+		String clan = Gondola.clans.getName(clanId);
 		String message = Gondola.clans.getColour(clanId) + clan + ChatColor.RESET + "\n";
 		message += "Owner: " + Gondola.clans.getOwnerName(clanId) + "\n";
 		message += "Officers: " + String.join(", ", Gondola.clans.getOfficerNames(clanId)) + "\n";

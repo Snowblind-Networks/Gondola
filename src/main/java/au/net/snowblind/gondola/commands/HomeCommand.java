@@ -34,6 +34,8 @@ public class HomeCommand implements CommandExecutor {
 					sender.sendMessage(ChatHandler.info("Teleporting home."));
 					TeleportHandler.teleport(sender, (Player) sender, 
 							HomeHandler.getHome((Player) sender, homes.iterator().next()));
+				} else {
+					sender.sendMessage(ChatHandler.error("You don't have any homes set."));
 				}
 			} else if (HomeHandler.getHomes((Player) sender).size() == 0) {
 				sender.sendMessage(ChatHandler.error("You don't have any homes set."));

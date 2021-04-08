@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import au.net.snowblind.gondola.commands.ClanCommand;
 import au.net.snowblind.gondola.commands.ClanHomeCommand;
 import au.net.snowblind.gondola.commands.ClanInfoCommand;
+import au.net.snowblind.gondola.commands.ClanLeaveCommand;
 import au.net.snowblind.gondola.commands.CreateClanCommand;
 import au.net.snowblind.gondola.commands.DelhomeCommand;
 import au.net.snowblind.gondola.commands.DelwarpCommand;
@@ -17,6 +18,7 @@ import au.net.snowblind.gondola.commands.InviteAcceptCommand;
 import au.net.snowblind.gondola.commands.ListClansCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
 import au.net.snowblind.gondola.commands.NicknameCommand;
+import au.net.snowblind.gondola.commands.RealnameCommand;
 import au.net.snowblind.gondola.commands.SetSpawnCommand;
 import au.net.snowblind.gondola.commands.UpdateSpawnCommand;
 import au.net.snowblind.gondola.commands.SethomeCommand;
@@ -38,19 +40,23 @@ public class Gondola extends JavaPlugin {
 	public static HashMap<Player, Player> teleports;
 	public static Jedis jedis;
 	
-	final JedisPoolConfig poolConfig = RedisHandler.buildPoolConfig();
-	JedisPool jedisPool = new JedisPool(poolConfig, getConfig().getString("redis.ip"), getConfig().getInt("redis.port"), Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
+	private JedisPoolConfig poolConfig;
+	private JedisPool jedisPool;
 	
 	@Override
 	public void onEnable() {
+		saveDefaultConfig();
+		
 		Gondola.plugin = this;
 		vault = new VaultProviders();
 		clans = new Clans();
 		teleports = new HashMap<Player, Player>();
+		poolConfig = RedisHandler.buildPoolConfig();
+		jedisPool = new JedisPool(poolConfig, getConfig().getString("redis.ip"), getConfig().getInt("redis.port"), Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
 		jedis = jedisPool.getResource();
 		MessageCommand.prevMessager = new HashMap<Player, Player>();
+		new GondolaExpansion().register();
 		
-		saveDefaultConfig();
 		Icons.loadIcons();
 		
 		registerCommands();
@@ -66,7 +72,8 @@ public class Gondola extends JavaPlugin {
 		getCommand("help").setExecutor(new HelpCommand());
 		getCommand("spawn").setExecutor(new SpawnCommand());
 		getCommand("setspawn").setExecutor(new SetSpawnCommand());
-		getCommand("nickname").setExecutor(new NicknameCommand());
+		getCommand("nick").setExecutor(new NicknameCommand());
+		getCommand("realname").setExecutor(new RealnameCommand());
 		getCommand("tp").setExecutor(new TeleportCommand());
 		getCommand("tpaccept").setExecutor(new TeleportAcceptCommand());
 		getCommand("msg").setExecutor(new MessageCommand());
@@ -84,5 +91,6 @@ public class Gondola extends JavaPlugin {
 		getCommand("listclans").setExecutor(new ListClansCommand());
 		getCommand("acceptinvite").setExecutor(new InviteAcceptCommand());
 		getCommand("claninfo").setExecutor(new ClanInfoCommand());
+		getCommand("clanleave").setExecutor(new ClanLeaveCommand());
 	}
 }
