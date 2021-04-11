@@ -141,6 +141,26 @@ public class ClanCommand implements CommandExecutor {
 					p.sendMessage(ChatHandler.warn("You have been kicked from your clan by "
 							+ ((Player) sender).getDisplayName() + "."));
 				}
+			} else if (args[0].equalsIgnoreCase("setowner")) {
+				if (args.length != 2) {
+					sender.sendMessage(ChatHandler.warn("Usage: /clan promote <player>"));
+					return true;
+				}
+				
+				Player p;
+				if ((p = Gondola.plugin.getServer().getPlayer(args[1])) == null) {
+					sender.sendMessage(ChatHandler.error("Can't find player " + args[1] + "."));
+				} else if (!Gondola.clans.getPosition((Player) sender).equalsIgnoreCase("owner")) {
+					sender.sendMessage(ChatHandler.error("Only the clan owner can choose a new one."));
+				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
+					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
+				} else {
+					((Player) sender).sendMessage(ChatHandler.info("You have made " + p.getDisplayName() + " the clan owner."));
+					p.sendMessage(ChatHandler.info("You have just been make the clan owner by "
+							+ ((Player) sender).getDisplayName() + "."));
+					Gondola.clans.setOwner(clan, p);
+					Gondola.clans.addOfficer(clan, (Player) sender);
+				}
 			} else if (args[0].equalsIgnoreCase("promote")) {
 				if (args.length != 2) {
 					sender.sendMessage(ChatHandler.warn("Usage: /clan promote <player>"));
@@ -230,6 +250,7 @@ public class ClanCommand implements CommandExecutor {
 		message += HelpCommand.entry("/clan", "setbanner", "Set your clan's banner to the one in your hand");
 		message += HelpCommand.entry("/clan", "invite <player>", "Invite player to your clan");
 		message += HelpCommand.entry("/clan", "kick <player>", "Kick a player from your clan");
+		message += HelpCommand.entry("/clan", "setowner <player>", "Set the owner of the clan");
 		message += HelpCommand.entry("/clan", "promote <player>", "Promote a player in your clan");
 		message += HelpCommand.entry("/clan", "demote <player>", "Demote a player in your clan");
 		message += HelpCommand.entry("/clan", "delete", "Delete your clan");

@@ -215,7 +215,8 @@ public class Clans {
 	}
 	
 	/**
-	 * Set the owner of a clan.
+	 * Set the owner of a clan, replacing the previous owner.
+	 * This does not change the previous owner's user data.
 	 * @param clanId The clan's ID.
 	 * @param p The player.
 	 */
