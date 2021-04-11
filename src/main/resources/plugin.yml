@@ -1,9 +1,9 @@
 name: Gondola
 main: au.net.snowblind.gondola.Gondola
-version: 0.2
+version: 0.3
 api-version: 1.16
 author: insyder1201
-depend: [Vault, PlaceholderAPI]
+depend: [Vault, PlaceholderAPI, Votifier]
 commands:
   help:
     description: List commands available
@@ -87,3 +87,9 @@ commands:
     description: Leave your current clan
     usage: /clanleave
     aliases: [cleave]
+  cc:
+    description: Clan chat
+    usage: /cc <message>
+  setscore:
+    description: Set clan score
+    usage: /setscore <clan> <score>

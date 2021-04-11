@@ -1,10 +1,18 @@
 package au.net.snowblind.gondola.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.block.CraftBanner;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -26,29 +34,52 @@ public class ClanCommand implements CommandExecutor {
 			if (args.length == 0) {
 				sender.sendMessage(usage());
 			} else if (args[0].equalsIgnoreCase("sethome")) {
-				Gondola.clans.setHome(clan, ((Player)sender).getLocation());
+				Location loc = ((Player) sender).getLocation();
+				Gondola.clans.setHome(clan, loc);
 				sender.sendMessage(ChatHandler.info("Clan home set to your current location."));
-			} else if (args[0].equalsIgnoreCase("setcolour")) {
-				if (args.length != 2) {
-					sender.sendMessage(ChatHandler.warn("Usage: /clan setcolour <colour>"));
+				
+				// Put the clan's banner up at their clan home
+				BannerMeta meta = Gondola.clans.getBanner(clan);
+				Block b = loc.getBlock();
+				CraftBanner banner;
+				
+				if (Tag.BANNERS.isTagged(b.getType()) && !b.getType().toString().contains("WALL")) {
+					banner = new CraftBanner(b);
+					String color = Gondola.clans.getBannerType(clan).toString().replaceFirst("_BANNER$", "").toLowerCase();
+					BlockData bd = Gondola.plugin.getServer().createBlockData(banner.getBlockData().getAsString()
+							.replaceAll(":(.*)(?=_banner)", ":" + color.toLowerCase()));
+					banner.setBlockData(bd);
+				} else {
+					b.setType(Gondola.clans.getBannerType(clan));
+					banner = new CraftBanner(b);
+				}
+				
+				if (meta != null)
+					banner.setPatterns(meta.getPatterns());
+				else
+					banner.setPatterns(new ArrayList<Pattern>());
+				
+				banner.update(true);
+			} else if (args[0].equalsIgnoreCase("setcolor")) {
+				if (args.length > 2) {
+					sender.sendMessage(ChatHandler.warn("Usage: /clan setcolor <color>"));
 					return true;
 				}
 				
-				DyeColor colour;
+				DyeColor color;
 				try {
-					colour = DyeColor.valueOf(args[1]);
+					color = DyeColor.valueOf(args[1]);
 				} catch (Exception e) {
-					sender.sendMessage(ChatHandler.error("Invalid colour: " + args[1] + "."));
-					String msg = "Valid colours are:";
+					String msg = "Valid colors are:";
 					for (DyeColor c : DyeColor.values())
 						msg = msg + " " + c.toString();
 					
-					sender.sendMessage(msg);
+					sender.sendMessage(ChatHandler.error(msg));
 					return true;
 				}
 				
-				Gondola.clans.setColour(clan, colour);
-				sender.sendMessage(ChatHandler.info("Clan colour set to " + args[1] + "."));
+				Gondola.clans.setColor(clan, color);
+				sender.sendMessage(ChatHandler.info("Clan color set to " + args[1] + "."));
 			} else if (args[0].equalsIgnoreCase("setbanner")) {
 				if (Tag.BANNERS.isTagged(((Player)sender).getInventory().getItemInMainHand().getType())) {
 					ItemStack banner = ((Player)sender).getInventory().getItemInMainHand();
@@ -186,7 +217,7 @@ public class ClanCommand implements CommandExecutor {
 	private String usage() {
 		String message = ChatColor.BOLD + "Clan admin commands" + ChatColor.RESET + ":\n";
 		message += HelpCommand.entry("/clan", "sethome", "Set your clan's home");
-		message += HelpCommand.entry("/clan", "setcolour <colour>", "Set the clan's colour");
+		message += HelpCommand.entry("/clan", "setcolor <color>", "Set the clan's color");
 		message += HelpCommand.entry("/clan", "setbanner", "Set your clan's banner to the one in your hand");
 		message += HelpCommand.entry("/clan", "invite <player>", "Invite player to your clan");
 		message += HelpCommand.entry("/clan", "kick <player>", "Kick a player from your clan");

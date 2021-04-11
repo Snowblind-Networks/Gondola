@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import au.net.snowblind.gondola.Gondola;
 import au.net.snowblind.gondola.handlers.ChatHandler;
+import redis.clients.jedis.Tuple;
 
 public class ListClansCommand implements CommandExecutor {
 	@Override
@@ -15,7 +16,12 @@ public class ListClansCommand implements CommandExecutor {
 			if (args.length != 0) {
 				return false;
 			} else {
-				sender.sendMessage(ChatHandler.info("Clans: " + String.join(", ", Gondola.clans.getClans().keySet())));
+				// Display clans sorted by top score
+				String clans = "Clans: \n";
+				for (Tuple clan : Gondola.clans.getClansSorted()) {
+					clans = clans + Gondola.clans.getName(clan.getElement()) + " (" + Math.round(clan.getScore()) + "), ";
+				}
+				sender.sendMessage(ChatHandler.info(clans.substring(0, clans.length() - 2)));
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

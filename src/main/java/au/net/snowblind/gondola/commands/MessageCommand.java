@@ -29,7 +29,8 @@ public class MessageCommand implements CommandExecutor {
 				return false;
 			}
 			
-			String msg = String.join(" ", Arrays.copyOfRange(args, 1, args.length)); 
+			String msg = ChatHandler.processMessage(String.join(" ", Arrays.copyOfRange(args, 1, args.length))); 
+
 			if (sender instanceof Player) {
 				sender.sendMessage(ChatColor.LIGHT_PURPLE + ((Player) sender).getDisplayName() + ">> " + msg);
 				p.sendMessage(ChatColor.LIGHT_PURPLE + ">> " + ((Player) sender).getDisplayName() + ": " + msg);
@@ -46,7 +47,7 @@ public class MessageCommand implements CommandExecutor {
 			
 			Player p = Gondola.plugin.getServer().getPlayer(prevMessager.get((Player) sender).getName());
 			if (p != null && p.isOnline()) {
-				String msg = String.join(" ", args); 
+				String msg = ChatHandler.processMessage(String.join(" ", args)); 
 				sender.sendMessage(ChatColor.LIGHT_PURPLE + ((Player) sender).getDisplayName() + ">> " + msg);
 				p.sendMessage(ChatColor.LIGHT_PURPLE + ">> " + ((Player) sender).getDisplayName() + ": " + msg);
 				prevMessager.put(p, (Player) sender);

@@ -37,7 +37,8 @@ public class ClanInfoCommand implements CommandExecutor {
 	
 	private static String clanInfo(String clanId) {
 		String clan = Gondola.clans.getName(clanId);
-		String message = Gondola.clans.getColour(clanId) + clan + ChatColor.RESET + "\n";
+		String message = Gondola.clans.getColor(clanId) + clan + ChatColor.RESET + "\n";
+		message += "Points: " + ChatColor.YELLOW + Gondola.clans.getPoints(clanId) + ChatColor.RESET + "\n";
 		message += "Owner: " + Gondola.clans.getOwnerName(clanId) + "\n";
 		message += "Officers: " + String.join(", ", Gondola.clans.getOfficerNames(clanId)) + "\n";
 		message += "Members: " + String.join(", ", Gondola.clans.getMemberNames(clanId)) + "\n";

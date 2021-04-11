@@ -5,9 +5,12 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,10 +21,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
+import com.vexsoftware.votifier.model.Vote;
+import com.vexsoftware.votifier.model.VotifierEvent;
+
 import au.net.snowblind.gondola.handlers.ChatHandler;
 import net.md_5.bungee.api.ChatColor;
 
-public class Listeners implements Listener {
+public class EventListeners implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
@@ -119,14 +125,30 @@ public class Listeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
-		// Drop player head
 		Player p = e.getEntity();
 		if (p.isDead() && p.getKiller() instanceof Player) {
+			// Drop player head
 	    	ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
 	    	SkullMeta sm = (SkullMeta) head.getItemMeta();
 	    	sm.setOwningPlayer(p);
 	    	head.setItemMeta(sm);
 			e.getDrops().add(head);
+			
+			// Give points to the winner's clan
+			String killerClan = Gondola.clans.getMembership(p.getKiller());
+			String killedClan = Gondola.clans.getMembership(p);
+			
+			long stolen = 0;
+			if (killerClan != null && killedClan != null) {
+				stolen += Gondola.clans.stealPoints(killerClan, killedClan, 1);
+			}
+			String influenceClan = Gondola.clans.getInfluence(p.getLocation());
+			if (influenceClan != null && killedClan != null) {
+				stolen += Gondola.clans.stealPoints(influenceClan, killedClan, 1);
+			}
+			
+			if (stolen > 0)
+				e.setDeathMessage(e.getDeathMessage() + " and lost " + stolen + " point(s)");
 		}
 	}
 	
@@ -141,5 +163,37 @@ public class Listeners implements Listener {
 	public void onFirstSpawn(PlayerSpawnLocationEvent e) {
 		if (!e.getPlayer().hasPlayedBefore())
 			e.setSpawnLocation(Gondola.plugin.getConfig().getLocation("spawn.point"));
+	}
+	
+	@EventHandler
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
+			String clanTo = Gondola.clans.getMembership((Player) e.getEntity());
+			String clanFrom = Gondola.clans.getMembership((Player) e.getDamager());
+			if (clanTo != null && clanFrom != null && clanTo.equals(clanFrom)) {
+				e.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.NORMAL)
+	public void onVotifierEvent(VotifierEvent event) {
+		Vote vote = event.getVote();
+		@SuppressWarnings("deprecation")
+		OfflinePlayer p = Gondola.plugin.getServer().getOfflinePlayer(vote.getUsername());
+		
+		if (p != null) {
+			String msg = ChatColor.DARK_AQUA + vote.getUsername() + " just voted and got $500";
+			
+			String uuid = p.getUniqueId().toString();
+			String clan = Gondola.clans.getMembership(uuid);
+			if (clan != null) {
+				Gondola.clans.addPoints(clan, 2);
+				msg += " and 2 points for their clan";
+			}
+			Gondola.vault.economy.depositPlayer(p, 500);
+			
+			Gondola.plugin.getServer().broadcastMessage(msg);
+		}
 	}
 }

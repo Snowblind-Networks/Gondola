@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import au.net.snowblind.gondola.commands.ClanChatCommand;
 import au.net.snowblind.gondola.commands.ClanCommand;
 import au.net.snowblind.gondola.commands.ClanHomeCommand;
 import au.net.snowblind.gondola.commands.ClanInfoCommand;
@@ -19,6 +20,7 @@ import au.net.snowblind.gondola.commands.ListClansCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
 import au.net.snowblind.gondola.commands.NicknameCommand;
 import au.net.snowblind.gondola.commands.RealnameCommand;
+import au.net.snowblind.gondola.commands.SetClanScoreCommand;
 import au.net.snowblind.gondola.commands.SetSpawnCommand;
 import au.net.snowblind.gondola.commands.UpdateSpawnCommand;
 import au.net.snowblind.gondola.commands.SethomeCommand;
@@ -52,7 +54,9 @@ public class Gondola extends JavaPlugin {
 		clans = new Clans();
 		teleports = new HashMap<Player, Player>();
 		poolConfig = RedisHandler.buildPoolConfig();
-		jedisPool = new JedisPool(poolConfig, getConfig().getString("redis.ip"), getConfig().getInt("redis.port"), Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
+		jedisPool = new JedisPool(poolConfig,
+				getConfig().getString("redis.ip"), getConfig().getInt("redis.port"),
+				Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
 		jedis = jedisPool.getResource();
 		MessageCommand.prevMessager = new HashMap<Player, Player>();
 		new GondolaExpansion().register();
@@ -60,7 +64,7 @@ public class Gondola extends JavaPlugin {
 		Icons.loadIcons();
 		
 		registerCommands();
-		getServer().getPluginManager().registerEvents(new Listeners(), this);
+		getServer().getPluginManager().registerEvents(new EventListeners(), this);
 	}
 	
 	@Override
@@ -92,5 +96,9 @@ public class Gondola extends JavaPlugin {
 		getCommand("acceptinvite").setExecutor(new InviteAcceptCommand());
 		getCommand("claninfo").setExecutor(new ClanInfoCommand());
 		getCommand("clanleave").setExecutor(new ClanLeaveCommand());
+		getCommand("cc").setExecutor(new ClanChatCommand());
+		
+
+		getCommand("setscore").setExecutor(new SetClanScoreCommand());
 	}
 }

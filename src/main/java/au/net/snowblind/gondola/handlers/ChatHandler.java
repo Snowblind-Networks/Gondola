@@ -18,7 +18,7 @@ public class ChatHandler {
 		String format = "%1$s" + ChatColor.RESET + "≫ %2$s";
 		String group = Gondola.vault.permission.getPrimaryGroup(p);
 		
-		// Set name colour
+		// Set name color
 		if (group.equalsIgnoreCase("admin")) {
 			format = ChatColor.DARK_RED + format;
 		} else if (group.equalsIgnoreCase("vip")) {
@@ -45,7 +45,7 @@ public class ChatHandler {
 					Gondola.plugin.getLogger().warning("Player data broken! Player " + p.getName() + " has a nonexistent position in its clan!");
 			}
 			
-			format = Gondola.clans.getColour(clanId) + clan + ChatColor.DARK_GRAY + format;
+			format = Gondola.clans.getColor(clanId) + clan + ChatColor.DARK_GRAY + format;
 		}
 		
 		return format;

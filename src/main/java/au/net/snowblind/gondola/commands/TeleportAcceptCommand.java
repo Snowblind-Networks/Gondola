@@ -18,7 +18,7 @@ public class TeleportAcceptCommand implements CommandExecutor {
 			}
 			Player p = Gondola.teleports.get((Player) sender);
 			
-			if (p == null) {
+			if (p == null || !p.isOnline()) {
 				sender.sendMessage(ChatHandler.error("You don't have any teleport requests."));
 				return true;
 			}

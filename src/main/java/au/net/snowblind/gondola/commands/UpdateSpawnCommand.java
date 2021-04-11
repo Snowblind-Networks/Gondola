@@ -35,7 +35,7 @@ public class UpdateSpawnCommand implements CommandExecutor {
 			
 			String clan = Gondola.clans.getMembership((Player)sender);
 			BannerMeta meta = Gondola.clans.getBanner(clan);
-			String colour = Gondola.clans.getBannerType(clan).toString().replaceFirst("_BANNER$", "").toLowerCase();
+			String color = Gondola.clans.getBannerType(clan).toString().replaceFirst("_BANNER$", "").toLowerCase();
 			
 			for (int x = (int) bb.getMinX(); x < bb.getMaxX(); x++) {
 				for (int y = (int) bb.getMinY(); y < bb.getMaxY(); y++) {
@@ -45,7 +45,7 @@ public class UpdateSpawnCommand implements CommandExecutor {
 							if (isExcluded(x, y, z)) continue;
 							CraftBanner banner = new CraftBanner(b);
 							
-							BlockData bd = Gondola.plugin.getServer().createBlockData(replaceBanners(banner.getBlockData().getAsString(), colour));
+							BlockData bd = Gondola.plugin.getServer().createBlockData(replaceBanners(banner.getBlockData().getAsString(), color));
 							banner.setBlockData(bd);
 							
 							if (meta != null)
@@ -55,8 +55,8 @@ public class UpdateSpawnCommand implements CommandExecutor {
 							
 							banner.update(true);
 						} else if (b.getType().toString().endsWith("_CONCRETE")) {
-							String clanColour = Gondola.clans.getColourString(clan);
-							b.setType(Material.valueOf(clanColour + "_CONCRETE"));
+							String clanColor = Gondola.clans.getColorString(clan);
+							b.setType(Material.valueOf(clanColor + "_CONCRETE"));
 						} else {
 							continue;
 						}
@@ -69,9 +69,9 @@ public class UpdateSpawnCommand implements CommandExecutor {
 		return true;
 	}
 	
-	private String replaceBanners(String msg, String colour) {
-		String res = msg.replaceAll(":(.*)(_wall_banner)", ":" + colour.toLowerCase() + "_wall_FDFSASDF");
-		res = res.replaceAll(":(.*)(?=_banner)", ":" + colour.toLowerCase());
+	private String replaceBanners(String msg, String color) {
+		String res = msg.replaceAll(":(.*)(_wall_banner)", ":" + color.toLowerCase() + "_wall_FDFSASDF");
+		res = res.replaceAll(":(.*)(?=_banner)", ":" + color.toLowerCase());
 		res = res.replaceAll("_wall_FDFSASDF", "_wall_banner");
 		return res;
 	}

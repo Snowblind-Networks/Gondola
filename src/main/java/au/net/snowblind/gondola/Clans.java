@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import au.net.snowblind.gondola.handlers.ChatHandler;
 import au.net.snowblind.gondola.handlers.RedisHandler;
 import net.md_5.bungee.api.ChatColor;
+import redis.clients.jedis.Tuple;
 
 /**
  * Represents all the clans and provides facilities for their management.
@@ -41,7 +42,7 @@ public class Clans {
 		Gondola.jedis.hset("clan:" + id, Map.of(
 				"name", clan,
 				"owner", owner.getUniqueId().toString(),
-				"colour", "WHITE",
+				"color", "WHITE",
 				"bannertype", "WHITE_BANNER"));
 		// Update user's data to include clan stuff
 		Gondola.jedis.hset("user:" + owner.getUniqueId().toString() + ":clan", Map.of(
@@ -49,7 +50,7 @@ public class Clans {
 				"name", clan,
 				"position", "owner"));
 		// Current existing clans
-		Gondola.jedis.sadd("clans", id);
+		Gondola.jedis.zadd("clans", Map.of(id, 0.0));
 	}
 	
 	/**
@@ -84,7 +85,7 @@ public class Clans {
 		Gondola.jedis.del("clan:" + clanId);
 		Gondola.jedis.del("clan:" + clanId + ":officers");
 		Gondola.jedis.del("clan:" + clanId + ":members");
-		Gondola.jedis.srem("clans", clanId);
+		Gondola.jedis.zrem("clans", clanId);
 	}
 	
 	/**
@@ -92,7 +93,7 @@ public class Clans {
 	 * @return a map of clan names to clan IDs for each existing clan.
 	 */
 	public Map<String, String> getClans() {
-		Set<String> clanIds = Gondola.jedis.smembers("clans");
+		Set<String> clanIds = Gondola.jedis.zrevrange("clans", 0, -1);
 		HashMap<String, String> clans = new HashMap<String, String>();
 		
 		for (String id : clanIds) {
@@ -101,13 +102,22 @@ public class Clans {
 		return clans;
 	}
 	
+	public Set<Tuple> getClansSorted() {
+		return Gondola.jedis.zrevrangeWithScores("clans", 0, -1);
+	}
+	
+	public Set<Tuple> getTopClans(int n) {
+		return Gondola.jedis.zrevrangeWithScores("clans", 0, n);
+	}
+	
+	
 	/**
 	 * Tests whether a clan exists.
 	 * @param clanId The clan's ID.
 	 * @return whether the clan currently exists.
 	 */
 	public boolean contains(String clanId) {
-		return Gondola.jedis.smembers("clans").contains(clanId);
+		return Gondola.jedis.zrange("clans", 0, -1).contains(clanId);
 	}
 	
 	/**
@@ -116,7 +126,7 @@ public class Clans {
 	 * @return whether the clan currently exists.
 	 */
 	public boolean containsName(String clan) {
-		for(String clanId : Gondola.jedis.smembers("clans"))
+		for(String clanId : Gondola.jedis.zrange("clans", 0, -1))
 			if (getName(clanId).equalsIgnoreCase(clan)) return true;
 		return false;
 	}
@@ -139,6 +149,10 @@ public class Clans {
 	 */
 	public String getMembership(Player p) {
 		return Gondola.jedis.hget("user:" + p.getUniqueId().toString() + ":clan", "id");
+	}
+	
+	public String getMembership(String uuid) {
+		return Gondola.jedis.hget("user:" + uuid + ":clan", "id");
 	}
 	
 	public Set<String> getAllPlayers(String clanId) {
@@ -306,36 +320,36 @@ public class Clans {
 	}
 	
 	/**
-	 * Gets the colour of the clan (for use in clan tags).
+	 * Gets the color of the clan (for use in clan tags).
 	 * @param clanId The clan's ID.
-	 * @return the ChatColour of the clan.
+	 * @return the ChatColor of the clan.
 	 */
-	public ChatColor getColour(String clanId) {
+	public ChatColor getColor(String clanId) {
 		/*
-		 * Colour is retrieved as a DyeColor string, converted to org.bukkit.Color,
-		 * converted to an RGB int, constructed into a java.awt.Colour,
+		 * Color is retrieved as a DyeColor string, converted to org.bukkit.Color,
+		 * converted to an RGB int, constructed into a java.awt.Color,
 		 * and converted into a Bungee ChatColor.
 		 */
-		Color colour = new Color(DyeColor.valueOf(getColourString(clanId)).getColor().asRGB());
-		return ChatColor.of(colour);
+		Color color = new Color(DyeColor.valueOf(getColorString(clanId)).getColor().asRGB());
+		return ChatColor.of(color);
 	}
 	
 	/**
-	 * Gets the colour string of the clan (for use in spawn).
+	 * Gets the color string of the clan (for use in spawn).
 	 * @param clanId The clan's ID.
 	 * @return the String of the DyeColor of the clan.
 	 */
-	public String getColourString(String clanId) {
-		return (Gondola.jedis.hget("clan:" + clanId, "colour"));
+	public String getColorString(String clanId) {
+		return (Gondola.jedis.hget("clan:" + clanId, "color"));
 	}
 	
 	/**
-	 * Sets the colour of a clan.
+	 * Sets the color of a clan.
 	 * @param clanId The clan's ID.
-	 * @param colour The colour.
+	 * @param color The color.
 	 */
-	public void setColour(String clanId, DyeColor colour) {
-		Gondola.jedis.hset("clan:" + clanId, "colour", colour.toString());
+	public void setColor(String clanId, DyeColor color) {
+		Gondola.jedis.hset("clan:" + clanId, "color", color.toString());
 	}
 	
 	/**
@@ -385,18 +399,36 @@ public class Clans {
 		RedisHandler.setLocation("clanhome:" + clanId, loc);
 	}
 	
-	public int getPoints(String clanId) {
-		return 0;
+	public long getPoints(String clanId) {
+		return Math.round(Gondola.jedis.zscore("clans", clanId));
+	}
+	
+	public void addPoints(String clanId, long points) {
+		Gondola.jedis.zincrby("clans", points, clanId);
+	}
+	
+	public long stealPoints(String clanTo, String clanFrom, int points) {
+		long curPoints = getPoints(clanFrom);
+		long stolen = (points > curPoints) ? curPoints : points;
+		
+		addPoints(clanTo, stolen);
+		addPoints(clanFrom, (-1) * stolen);
+		return stolen;
 	}
 	
 	public boolean underInfluence(String clanId, Location loc) {
+		// If in spawn
+		if (loc.getWorld().getName().equals("world") && Math.abs(loc.getX()) < 173 && Math.abs(loc.getZ()) < 173) {
+			return false;
+		}
 		Location home = getHome(clanId);
+		if (home == null) return false;
 		if (!loc.getWorld().equals(home.getWorld())) return false;
 		return (home.distance(loc) < getPoints(clanId));
 	}
 	
 	public String getInfluence(Location loc) {
-		Set<String> clans = Gondola.jedis.smembers("clans");
+		Set<String> clans = Gondola.jedis.zrange("clans", 0, -1);
 		String max = "";
 		
 		for (String clan : clans) {
