@@ -2,6 +2,7 @@ package au.net.snowblind.gondola;
 
 import java.util.HashMap;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,6 +42,7 @@ public class Gondola extends JavaPlugin {
 	public static Clans clans;
 	public static HashMap<Player, Player> teleports;
 	public static Jedis jedis;
+	public static HashMap<Block, String> flags;
 	
 	private JedisPoolConfig poolConfig;
 	private JedisPool jedisPool;
@@ -58,6 +60,12 @@ public class Gondola extends JavaPlugin {
 				getConfig().getString("redis.ip"), getConfig().getInt("redis.port"),
 				Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
 		jedis = jedisPool.getResource();
+		flags = new HashMap<Block, String>();
+		
+		for (String clan : clans.getClans().values()) {
+			flags.put(clans.getHome(clan).getBlock(), clan);
+		}
+		
 		MessageCommand.prevMessager = new HashMap<Player, Player>();
 		new GondolaExpansion().register();
 		

@@ -1,16 +1,29 @@
 package au.net.snowblind.gondola;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -175,10 +188,91 @@ public class EventListeners implements Listener {
 			}
 		}
 	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent e) {
+		if (Gondola.flags.containsKey(e.getBlock()) || Gondola.flags.containsKey(e.getBlock().getRelative(BlockFace.UP))) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockBurn(BlockBurnEvent e) {
+		if (Gondola.flags.containsKey(e.getBlock()) || Gondola.flags.containsKey(e.getBlock().getRelative(BlockFace.UP))) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onEntityExplode(EntityExplodeEvent e) {
+		Set<Block> blocks = new HashSet<Block>();
+		for (Block b : e.blockList()) {
+			blocks.add(b.getRelative(BlockFace.UP));
+			blocks.add(b);
+		}
+		
+		blocks.retainAll(Gondola.flags.keySet());
+		if (blocks.size() > 0) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockExplode(BlockExplodeEvent e) {
+		Set<Block> blocks = new HashSet<Block>();
+		for (Block b : e.blockList()) {
+			blocks.add(b.getRelative(BlockFace.UP));
+			blocks.add(b);
+		}
+		
+		blocks.retainAll(Gondola.flags.keySet());
+		if (blocks.size() > 0) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockPistoned(BlockPistonExtendEvent e) {
+		Set<Block> blocks = new HashSet<Block>();
+		for (Block b : e.getBlocks()) {
+			blocks.add(b.getRelative(BlockFace.UP));
+			blocks.add(b);
+		}
+		
+		blocks.retainAll(Gondola.flags.keySet());
+		if (blocks.size() > 0) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockPistoned(BlockPistonRetractEvent e) {
+		Set<Block> blocks = new HashSet<Block>();
+		for (Block b : e.getBlocks()) {
+			blocks.add(b.getRelative(BlockFace.UP));
+			blocks.add(b);
+		}
+		
+		blocks.retainAll(Gondola.flags.keySet());
+		if (blocks.size() > 0) {
+			e.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onBlockPhysics(BlockPhysicsEvent e) {
+		Block b = e.getBlock();
+		if (Tag.BANNERS.isTagged(b.getType())) {
+			if (Gondola.flags.containsKey(b)) {
+				b.getRelative(BlockFace.DOWN).setType(Material.DIRT);
+				e.setCancelled(true);
+			}
+		}
+	}
 	
 	@EventHandler(priority=EventPriority.NORMAL)
-	public void onVotifierEvent(VotifierEvent event) {
-		Vote vote = event.getVote();
+	public void onVotifierEvent(VotifierEvent e) {
+		Vote vote = e.getVote();
 		@SuppressWarnings("deprecation")
 		OfflinePlayer p = Gondola.plugin.getServer().getOfflinePlayer(vote.getUsername());
 		

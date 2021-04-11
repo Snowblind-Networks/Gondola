@@ -34,6 +34,13 @@ public class ClanCommand implements CommandExecutor {
 			if (args.length == 0) {
 				sender.sendMessage(usage());
 			} else if (args[0].equalsIgnoreCase("sethome")) {
+				// Remove old home
+				Location home = Gondola.clans.getHome(clan);
+				if (home != null) {
+					Gondola.flags.remove(home.getBlock());
+					home.getBlock().setType(Material.AIR);
+				}
+				
 				Location loc = ((Player) sender).getLocation();
 				Gondola.clans.setHome(clan, loc);
 				sender.sendMessage(ChatHandler.info("Clan home set to your current location."));
@@ -60,6 +67,8 @@ public class ClanCommand implements CommandExecutor {
 					banner.setPatterns(new ArrayList<Pattern>());
 				
 				banner.update(true);
+				
+				Gondola.flags.put(b, clan);
 			} else if (args[0].equalsIgnoreCase("setcolor")) {
 				if (args.length > 2) {
 					sender.sendMessage(ChatHandler.warn("Usage: /clan setcolor <color>"));
