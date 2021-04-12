@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class FlagCapture implements Runnable {
 	//private final double MULTIPLIER = 0.001;
-	private final double MULTIPLIER = 0.05;
+	private final double MULTIPLIER = 0.001;
 
 	private String attackingClan, defendingClan;
 	private double progress;
