@@ -1,5 +1,6 @@
 package au.net.snowblind.gondola;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 import org.bukkit.block.Block;
@@ -19,8 +20,10 @@ import au.net.snowblind.gondola.commands.HomeCommand;
 import au.net.snowblind.gondola.commands.InviteAcceptCommand;
 import au.net.snowblind.gondola.commands.ListClansCommand;
 import au.net.snowblind.gondola.commands.MessageCommand;
+import au.net.snowblind.gondola.commands.MuteCommand;
 import au.net.snowblind.gondola.commands.NicknameCommand;
 import au.net.snowblind.gondola.commands.RealnameCommand;
+import au.net.snowblind.gondola.commands.RulesCommand;
 import au.net.snowblind.gondola.commands.SetClanScoreCommand;
 import au.net.snowblind.gondola.commands.SetSpawnCommand;
 import au.net.snowblind.gondola.commands.UpdateSpawnCommand;
@@ -41,6 +44,7 @@ public class Gondola extends JavaPlugin {
 	public static VaultProviders vault;
 	public static Clans clans;
 	public static HashMap<Player, Player> teleports;
+	public static HashMap<Player, LocalDateTime> mutes;
 	public static Jedis jedis;
 	public static HashMap<Block, String> flags;
 	
@@ -55,6 +59,7 @@ public class Gondola extends JavaPlugin {
 		vault = new VaultProviders();
 		clans = new Clans();
 		teleports = new HashMap<Player, Player>();
+		mutes = new HashMap<Player, LocalDateTime>();
 		poolConfig = RedisHandler.buildPoolConfig();
 		jedisPool = new JedisPool(poolConfig,
 				getConfig().getString("redis.ip"), getConfig().getInt("redis.port"),
@@ -105,8 +110,8 @@ public class Gondola extends JavaPlugin {
 		getCommand("claninfo").setExecutor(new ClanInfoCommand());
 		getCommand("clanleave").setExecutor(new ClanLeaveCommand());
 		getCommand("cc").setExecutor(new ClanChatCommand());
-		
-
 		getCommand("setscore").setExecutor(new SetClanScoreCommand());
+		getCommand("rules").setExecutor(new RulesCommand());
+		getCommand("mute").setExecutor(new MuteCommand());
 	}
 }

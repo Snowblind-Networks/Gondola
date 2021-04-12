@@ -110,6 +110,9 @@ public class Clans {
 		return Gondola.jedis.zrevrangeWithScores("clans", 0, n);
 	}
 	
+	public String getTopClan() {
+		return Gondola.clans.getTopClans(1).iterator().next().getElement();
+	}
 	
 	/**
 	 * Tests whether a clan exists.
@@ -439,5 +442,18 @@ public class Clans {
 			}
 		}
 		return (max == "") ? null : max;
+	}
+	
+	public void setRule(String clanId, String rule) {
+		Gondola.jedis.hset("clan:" + clanId, "rule", rule);
+	}
+	
+	public String getRule(String clanId) {
+		return Gondola.jedis.hget("clan:" + clanId, "rule");
+	}
+	
+	public String getTopClanRule() {
+		String clanId = getTopClans(1).iterator().next().getElement();
+		return getRule(clanId);
 	}
 }

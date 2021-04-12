@@ -1,8 +1,7 @@
 package au.net.snowblind.gondola;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -131,8 +130,20 @@ public class EventListeners implements Listener {
 	
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
+		Player p = e.getPlayer();
+		
+		// Handle muted player
+		if (Gondola.mutes.containsKey(p)) {
+			if (Gondola.mutes.get(p).isBefore(LocalDateTime.now())) {
+				Gondola.mutes.remove(p);
+			} else {
+				p.sendMessage(ChatHandler.warn("You are muted!"));
+				e.setCancelled(true);
+			}
+		}
+		
 		// Apply chat formats
-		e.setFormat(ChatHandler.getFormat(e.getPlayer()));
+		e.setFormat(ChatHandler.getFormat(p));
 		e.setMessage(ChatHandler.processMessage(e.getMessage()));
 	}
 	

@@ -1,6 +1,7 @@
 package au.net.snowblind.gondola.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -99,6 +100,10 @@ public class ClanCommand implements CommandExecutor {
 				} else {
 					sender.sendMessage(ChatHandler.warn("Hold a banner in your hand and run this command again."));
 				}
+			} else if (args[0].equalsIgnoreCase("setrule")) {
+				String rule = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+				Gondola.clans.setRule(clan, rule);
+				sender.sendMessage(ChatHandler.info("Set clan's rule to: " + rule));
 			} else if (args[0].equalsIgnoreCase("invite")) {
 				if (args.length != 2) {
 					sender.sendMessage(ChatHandler.warn("Usage: /clan invite <player>"));
@@ -248,6 +253,7 @@ public class ClanCommand implements CommandExecutor {
 		message += HelpCommand.entry("/clan", "sethome", "Set your clan's home");
 		message += HelpCommand.entry("/clan", "setcolor <color>", "Set the clan's color");
 		message += HelpCommand.entry("/clan", "setbanner", "Set your clan's banner to the one in your hand");
+		message += HelpCommand.entry("/clan", "setrule", "Set the chat rule to be enforced if your clan wins the weekly event");
 		message += HelpCommand.entry("/clan", "invite <player>", "Invite player to your clan");
 		message += HelpCommand.entry("/clan", "kick <player>", "Kick a player from your clan");
 		message += HelpCommand.entry("/clan", "setowner <player>", "Set the owner of the clan");

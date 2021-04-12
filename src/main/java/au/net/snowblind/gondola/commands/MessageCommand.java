@@ -1,5 +1,6 @@
 package au.net.snowblind.gondola.commands;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -18,6 +19,18 @@ public class MessageCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (cmd.getName().equalsIgnoreCase("msg")) { // in /msg command
+			if (sender instanceof Player) {
+				Player p = (Player) sender;
+				if (Gondola.mutes.containsKey(p)) {
+					if (Gondola.mutes.get(p).isBefore(LocalDateTime.now())) {
+						Gondola.mutes.remove(p);
+					} else {
+						sender.sendMessage(ChatHandler.warn("You are muted!"));
+						return true;
+					}
+				}
+			}
+			
 			if (args.length < 2) {
 				return false;
 			}

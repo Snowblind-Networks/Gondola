@@ -93,3 +93,9 @@ commands:
   setscore:
     description: Set clan score
     usage: /setscore <clan> <score>
+  rules:
+    description: Get server rules
+    usage: /rules
+  mute:
+    description: Mute a player for 10 minutes
+    usage: /mute <player>
