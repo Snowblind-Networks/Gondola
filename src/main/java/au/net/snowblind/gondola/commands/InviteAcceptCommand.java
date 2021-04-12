@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import au.net.snowblind.gondola.FlagCapture;
 import au.net.snowblind.gondola.Gondola;
 import au.net.snowblind.gondola.handlers.ChatHandler;
 
@@ -24,6 +25,14 @@ public class InviteAcceptCommand implements CommandExecutor {
 				String name = Gondola.clans.getName(clan);
 				sender.sendMessage(ChatHandler.info("You have successfully joined clan " + name + "."));
 				Gondola.clans.addMember(clan, p);
+				
+				// Update current captures
+				for (FlagCapture cap : Gondola.captures.values()) {
+					if (clan.equals(cap.getAttackingClan()))
+						cap.addAttackingPlayer(p);
+					else if (clan.equals(cap.getDefendingClan()))
+						cap.addDefendingPlayer(p);
+				}
 			}
 		} else {
 			sender.sendMessage("Only players can run this command.");

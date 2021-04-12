@@ -3,6 +3,7 @@ package au.net.snowblind.gondola.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +19,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+
+import au.net.snowblind.gondola.FlagCapture;
 import au.net.snowblind.gondola.Gondola;
 import au.net.snowblind.gondola.handlers.ChatHandler;
 import net.md_5.bungee.api.ChatColor;
@@ -70,6 +75,14 @@ public class ClanCommand implements CommandExecutor {
 				banner.update(true);
 				
 				Gondola.flags.put(b, clan);
+				if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+					Location location = loc.getBlock().getLocation();
+					Hologram hologram = HologramsAPI.createHologram(Gondola.plugin, location.add(0.5, 2.5, 0.5));
+					hologram.appendTextLine(Gondola.clans.getColor(clan) + Gondola.clans.getName(clan));
+					if (Gondola.holograms.containsKey(clan))
+						Gondola.holograms.get(clan).delete();
+					Gondola.holograms.put(clan, hologram);
+				}
 			} else if (args[0].equalsIgnoreCase("setcolor")) {
 				if (args.length > 2) {
 					sender.sendMessage(ChatHandler.warn("Usage: /clan setcolor <color>"));
@@ -145,10 +158,17 @@ public class ClanCommand implements CommandExecutor {
 					((Player) sender).sendMessage(ChatHandler.info("You have kicked " + p.getDisplayName() + " to your clan."));
 					p.sendMessage(ChatHandler.warn("You have been kicked from your clan by "
 							+ ((Player) sender).getDisplayName() + "."));
+					
+					for (FlagCapture cap : Gondola.captures.values()) {
+						if (clan.equals(cap.getAttackingClan()))
+							cap.delAttackingPlayer(p);
+						else if (clan.equals(cap.getDefendingClan()))
+							cap.delDefendingPlayer(p);
+					}
 				}
 			} else if (args[0].equalsIgnoreCase("setowner")) {
 				if (args.length != 2) {
-					sender.sendMessage(ChatHandler.warn("Usage: /clan promote <player>"));
+					sender.sendMessage(ChatHandler.warn("Usage: /clan setowner <player>"));
 					return true;
 				}
 				
@@ -160,11 +180,11 @@ public class ClanCommand implements CommandExecutor {
 				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
 					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
 				} else {
-					((Player) sender).sendMessage(ChatHandler.info("You have made " + p.getDisplayName() + " the clan owner."));
-					p.sendMessage(ChatHandler.info("You have just been make the clan owner by "
-							+ ((Player) sender).getDisplayName() + "."));
+					sender.sendMessage(ChatHandler.info("Clan owner set to " + args[1] + "."));
+					p.sendMessage(ChatHandler.info("You are the new owner of your clan."));
+					Gondola.clans.removeFromClan(clan, p);
 					Gondola.clans.setOwner(clan, p);
-					Gondola.clans.addOfficer(clan, (Player) sender);
+					Gondola.clans.addOfficer(clan, ((Player) sender));
 				}
 			} else if (args[0].equalsIgnoreCase("promote")) {
 				if (args.length != 2) {
@@ -217,28 +237,20 @@ public class ClanCommand implements CommandExecutor {
 					return true;
 				}
 				String name = Gondola.clans.getName(clan);
-				Gondola.clans.deleteClan(clan);
-				sender.sendMessage(ChatHandler.warn("Clan " + name + " deleted."));
-			} else if (args[0].equalsIgnoreCase("changeowner")) {
-				if (args.length != 2) {
-					sender.sendMessage(ChatHandler.warn("Usage: /clan changeowner <player>"));
-					return true;
+				// Remove old home
+				Location home = Gondola.clans.getHome(clan);
+				
+				if (home != null) {
+					Gondola.flags.remove(home.getBlock());
+					home.getBlock().setType(Material.AIR);
+									
+					if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+						Gondola.holograms.get(clan).delete();
+					}
 				}
 				
-				Player p;
-				if ((p = Gondola.plugin.getServer().getPlayer(args[1])) == null) {
-					sender.sendMessage(ChatHandler.error("Can't find player " + args[1] + "."));
-				} else if (!Gondola.clans.getPosition((Player) sender).equalsIgnoreCase("owner")) {
-					sender.sendMessage(ChatHandler.error("Only the clan owner designate the new clan owner."));
-				} else if (!Gondola.clans.getMembership(p).equalsIgnoreCase(clan)) {
-					sender.sendMessage(ChatHandler.error("You aren't in the same clan as " + args[1] + "."));
-				} else {
-					sender.sendMessage(ChatHandler.info("Clan owner set to " + args[1] + "."));
-					p.sendMessage(ChatHandler.info("You are the new owner of your clan."));
-					Gondola.clans.removeFromClan(clan, p);
-					Gondola.clans.setOwner(clan, p);
-					Gondola.clans.addOfficer(clan, ((Player) sender));
-				}
+				Gondola.clans.deleteClan(clan);
+				sender.sendMessage(ChatHandler.warn("Clan " + name + " deleted."));
 			} else {
 				sender.sendMessage(usage());
 			}

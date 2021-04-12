@@ -53,6 +53,10 @@
       <id>bintray-repo</id>
       <url>https://dl.bintray.com/ichbinjoe/public/</url>
     </repository>
+    <repository>
+      <id>codemc-repo</id>
+      <url>https://repo.codemc.io/repository/maven-public/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -90,6 +94,12 @@
       <groupId>com.vexsoftware</groupId>
       <artifactId>nuvotifier-universal</artifactId>
       <version>2.6.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.gmail.filoghost.holographicdisplays</groupId>
+      <artifactId>holographicdisplays-api</artifactId>
+      <version>2.4.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

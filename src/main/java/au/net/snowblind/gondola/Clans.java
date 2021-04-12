@@ -170,6 +170,16 @@ public class Clans {
 		return players;
 	}
 	
+	public Set<Player> getAllOnlinePlayers(String clanId) {
+		Set<Player> players = new HashSet<Player>();
+		getAllPlayers(clanId).forEach(uuid -> {
+			Player p;
+			if ((p = Gondola.plugin.getServer().getPlayer(UUID.fromString(uuid))) != null)
+				players.add(p);
+			});
+		return players;
+	}
+	
 	/**
 	 * Remove a player from a clan.
 	 * @param clanId The clan's ID.

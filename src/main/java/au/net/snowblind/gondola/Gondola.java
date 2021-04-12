@@ -3,9 +3,14 @@ package au.net.snowblind.gondola;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 
 import au.net.snowblind.gondola.commands.ClanChatCommand;
 import au.net.snowblind.gondola.commands.ClanCommand;
@@ -46,7 +51,9 @@ public class Gondola extends JavaPlugin {
 	public static HashMap<Player, Player> teleports;
 	public static HashMap<Player, LocalDateTime> mutes;
 	public static Jedis jedis;
-	public static HashMap<Block, String> flags;
+	public static HashMap<Block, String> flags; // Clan home flags
+	public static HashMap<String, Hologram> holograms; // Clan home holograms
+	public static HashMap<String, FlagCapture> captures; // Ongoing captures of flags
 	
 	private JedisPoolConfig poolConfig;
 	private JedisPool jedisPool;
@@ -66,18 +73,32 @@ public class Gondola extends JavaPlugin {
 				Protocol.DEFAULT_TIMEOUT, getConfig().getString("redis.password"));
 		jedis = jedisPool.getResource();
 		flags = new HashMap<Block, String>();
+		holograms = new HashMap<String, Hologram>();
 		
 		for (String clan : clans.getClans().values()) {
-			flags.put(clans.getHome(clan).getBlock(), clan);
+			if (clans.getHome(clan) != null)
+				flags.put(clans.getHome(clan).getBlock(), clan);
 		}
 		
 		MessageCommand.prevMessager = new HashMap<Player, Player>();
 		new GondolaExpansion().register();
 		
+		captures = new HashMap<String, FlagCapture>();
+		
 		Icons.loadIcons();
 		
 		registerCommands();
 		getServer().getPluginManager().registerEvents(new EventListeners(), this);
+		
+		if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+			for (Block flag : flags.keySet()) {
+				Location loc = flag.getLocation().add(0.5, 2.5, 0.5);
+				Hologram hologram = HologramsAPI.createHologram(plugin, loc);
+				String clanId = flags.get(flag);
+				hologram.appendTextLine(clans.getColor(clanId) + clans.getName(clanId));
+				holograms.put(clanId, hologram);
+			}
+		}
 	}
 	
 	@Override

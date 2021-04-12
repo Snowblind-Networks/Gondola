@@ -34,7 +34,7 @@ public class RedisHandler {
 		YamlConfiguration config = new YamlConfiguration();
 		try {
 			config.loadFromString(configSerialized);
-		} catch (InvalidConfigurationException e) {
+		} catch (InvalidConfigurationException | IllegalArgumentException e) {
 			return null;
 		}
 		return (BannerMeta) config.get("meta");

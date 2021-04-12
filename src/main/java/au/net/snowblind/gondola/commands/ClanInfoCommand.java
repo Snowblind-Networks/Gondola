@@ -23,7 +23,7 @@ public class ClanInfoCommand implements CommandExecutor {
 				return true;
 			}
 		} else {
-			String clan = Gondola.clans.contains(args[0]) ? args[0] : null;
+			String clan = Gondola.clans.getClans().containsKey(args[0]) ? args[0] : null;
 			if (clan == null) {
 				sender.sendMessage(ChatHandler.error("Clan does not exist."));
 				return true;

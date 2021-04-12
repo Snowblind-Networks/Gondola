@@ -3,7 +3,7 @@ main: au.net.snowblind.gondola.Gondola
 version: 0.3
 api-version: 1.16
 author: insyder1201
-depend: [Vault, PlaceholderAPI, Votifier]
+depend: [Vault, PlaceholderAPI, Votifier, HolographicDisplays]
 commands:
   help:
     description: List commands available

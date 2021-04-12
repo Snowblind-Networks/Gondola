@@ -33,6 +33,11 @@ public class ClanHomeCommand implements CommandExecutor {
 				
 				Location home = Gondola.clans.getHome(clan);
 				
+				if (home == null) {
+					sender.sendMessage(ChatHandler.warn("Your clan has no home set!"));
+					return true;
+				}
+				
 				// Put the clan's banner up at their clan home
 				BannerMeta meta = Gondola.clans.getBanner(clan);
 				Block b = home.getBlock();

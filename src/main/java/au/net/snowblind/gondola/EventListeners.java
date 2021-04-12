@@ -31,11 +31,13 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitTask;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import com.vexsoftware.votifier.model.Vote;
 import com.vexsoftware.votifier.model.VotifierEvent;
 
+import au.net.snowblind.gondola.events.FlagCaptureStartEvent;
 import au.net.snowblind.gondola.handlers.ChatHandler;
 import net.md_5.bungee.api.ChatColor;
 
@@ -93,6 +95,16 @@ public class EventListeners implements Listener {
 			}
 		}
 		
+		String clan = Gondola.clans.getMembership(p);
+		if (clan != null) {
+			for (FlagCapture cap : Gondola.captures.values()) {
+				if (clan.equals(cap.getAttackingClan()))
+					cap.addAttackingPlayer(p);
+				else if (clan.equals(cap.getDefendingClan()))
+					cap.addDefendingPlayer(p);
+			}
+		}
+		
 		// Display join message only if more than 20 players are on
 		if (Gondola.plugin.getServer().getOnlinePlayers().size() > 20) {
 			e.setJoinMessage(null);
@@ -107,6 +119,16 @@ public class EventListeners implements Listener {
 		Player p = e.getPlayer();
 		Gondola.clans.invites.remove(p);
 		Gondola.teleports.remove(p);
+		
+		String clan = Gondola.clans.getMembership(p);
+		if (clan != null) {
+			for (FlagCapture cap : Gondola.captures.values()) {
+				if (clan.equals(cap.getAttackingClan()))
+					cap.delAttackingPlayer(p);
+				else if (clan.equals(cap.getDefendingClan()))
+					cap.delDefendingPlayer(p);
+			}
+		}
 		
 		// Display quit message only if more than 20 players are on
 		if (Gondola.plugin.getServer().getOnlinePlayers().size() > 20) {
@@ -204,6 +226,12 @@ public class EventListeners implements Listener {
 	public void onBlockBreak(BlockBreakEvent e) {
 		if (Gondola.flags.containsKey(e.getBlock()) || Gondola.flags.containsKey(e.getBlock().getRelative(BlockFace.UP))) {
 			e.setCancelled(true);
+			Block b = e.getBlock();
+			String attackingClan = Gondola.clans.getMembership(e.getPlayer());
+			String defendingClan = Gondola.flags.get(b);
+			if (!defendingClan.equals(attackingClan)) {
+				Bukkit.getPluginManager().callEvent(new FlagCaptureStartEvent(defendingClan, attackingClan, b));
+			}
 		}
 	}
 	
@@ -300,5 +328,19 @@ public class EventListeners implements Listener {
 			
 			Gondola.plugin.getServer().broadcastMessage(msg);
 		}
+	}
+	
+	@EventHandler
+	public void onFlagCaptureStart(FlagCaptureStartEvent e) {
+		if (Gondola.captures.containsKey(e.getDefendingClan())) {
+			e.setCancelled(true);
+			return;
+		}
+		
+		FlagCapture cap = new FlagCapture(e.getDefendingClan(), e.getAttackingClan(), Gondola.clans.getHome(e.getDefendingClan()));
+		BukkitTask task = Gondola.plugin.getServer().getScheduler().runTaskTimerAsynchronously(Gondola.plugin, cap, 10, 10);
+		cap.setTask(task);
+		
+		Gondola.captures.put(e.getDefendingClan(), cap);
 	}
 }
